@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
+    "@nuxtjs/better-auth": "^0.3.2",
     "better-auth": "^1.7.4",
     "dotenv": "^17.4.2",
     "drizzle-orm": "0.45.2",
