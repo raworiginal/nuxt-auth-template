@@ -1,9 +1,9 @@
-import { defineServerAuth } from "@nuxtjs/better-auth/config";
+import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { username, admin } from "better-auth/plugins";
-import { db } from "./utils/db";
+import { db } from "./server/utils/db";
 
-export default defineServerAuth({
+export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
