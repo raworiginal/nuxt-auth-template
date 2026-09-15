@@ -16,7 +16,7 @@
     "better-auth": "^1.7.4",
     "daisyui": "^5.7.37",
     "dotenv": "^17.4.2",
-    "drizzle-orm": "0.45.2",
+    "drizzle-orm": "1.0.0-rc.4",
     "nuxt": "^4.5.2",
     "tailwindcss": "^4.3.3",
     "vue": "^3.5.42",
