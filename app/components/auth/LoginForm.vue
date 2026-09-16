@@ -1,5 +1,7 @@
 <template>
-  <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4">
+  <fieldset
+    class="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4"
+  >
     <legend class="fieldset-legend">Login</legend>
 
     <label class="label">Email</label>

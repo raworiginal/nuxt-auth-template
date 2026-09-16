@@ -1,4 +1,6 @@
 import { drizzle } from "drizzle-orm/pglite";
-import * as schema from "../db/schema";
+import { authRelations } from "../db/schema/auth-schema";
 
-export const db = drizzle(process.env.DATABASE_URL!, { schema });
+export const db = drizzle(process.env.DATABASE_URL!, {
+  relations: authRelations,
+});

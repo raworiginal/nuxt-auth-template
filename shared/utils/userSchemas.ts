@@ -1,6 +1,10 @@
-import { createSelectSchema } from "drizzle-orm/zod";
-import { user } from "~~/server/db/schema"
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-orm/zod";
+import { user } from "~~/server/db/schema";
 
-export const userSelectSchema = createSelectSchema(user)
-
-
+export const userSelectSchema = createSelectSchema(user);
+export const usesrInsertSchema = createInsertSchema(user);
+export const userUpdateSchema = createUpdateSchema(user);
