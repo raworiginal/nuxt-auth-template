@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { loginSchema } from "#shared/utils/authSchemas";
-
 const emailLogin = useSignIn("email");
 const usernameLogin = useSignIn("username");
 
@@ -19,10 +17,11 @@ const isPending = computed(() =>
     ? emailLogin.status.value === "pending"
     : usernameLogin.status.value === "pending",
 );
+const isFormComplete = computed(
+  () => form.identifier.trim().length > 0 && form.password.length > 0,
+);
 
 async function login() {
-  const result = loginSchema.safeParse(form);
-
   if (isEmail.value) {
     console.log("email login");
     await emailLogin.execute({
@@ -37,8 +36,6 @@ async function login() {
     password: form.password,
   });
 }
-
-const logout = useSignOut().execute();
 </script>
 
 <template>
@@ -55,7 +52,9 @@ const logout = useSignOut().execute();
         v-model="form.identifier"
         type="text"
         class="input"
-        placeholder="Email"
+        placeholder="Email or Username"
+        autocomplete="username"
+        required
       />
 
       <label class="label">Password</label>
@@ -64,14 +63,17 @@ const logout = useSignOut().execute();
         type="password"
         class="input"
         placeholder="Password"
+        autocomplete="current-password"
+        required
       />
 
-      <button class="btn btn-neutral mt-4">
+      <button
+        :disabled="!isFormComplete || isPending"
+        class="btn btn-neutral mt-4"
+      >
         <span v-if="isPending" class="loading"></span>
         <span v-else>Login</span>
       </button>
     </fieldset>
   </form>
-
-  <button @click="logout" class="btn btn-error">logout</button>
 </template>
