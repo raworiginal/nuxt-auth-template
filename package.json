@@ -10,10 +10,12 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "better-auth": "^1.7.6",
     "dotenv": "^18.0.4",
     "drizzle-orm": "1.0.0-rc.4",
     "nuxt": "^4.5.2",
     "pg": "^8.23.0",
+    "postgres": "^3.4.9",
     "vue": "^3.5.43",
     "vue-router": "^5.3.1"
   },
