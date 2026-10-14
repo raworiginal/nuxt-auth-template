@@ -6,6 +6,7 @@ import * as authSchema from "./db/schema/auth-schema.ts";
 const db = getDatabase();
 
 export const auth = betterAuth({
+  emailAndPassword: { enabled: true },
   database: drizzleAdapter(db, {
     provider: "pg", // or "mysql", "sqlite"
     schema: authSchema,
