@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <form>
     <fieldset
       class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4"
     >
@@ -10,5 +10,5 @@
 
       <button class="btn btn-primary mt-4">Register</button>
     </fieldset>
-  </div>
+  </form>
 </template>

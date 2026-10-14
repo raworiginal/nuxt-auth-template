@@ -1,3 +1,3 @@
 <template>
-  <div>You are singed in</div>
+  <div>You are signed in</div>
 </template>
