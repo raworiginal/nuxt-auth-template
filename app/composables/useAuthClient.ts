@@ -1,4 +1,3 @@
-import { input } from "zod";
 import { type RegisterInput } from "~/types/auth";
 function getErrorMessage(error: unknown): string {
   if (
@@ -40,5 +39,26 @@ export function useAuthClient() {
       loading.value = false;
     }
   }
-  return { register, loading, error };
+
+  async function logOut() {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const response = await signOut();
+
+      if (response.error) {
+        error.value = getErrorMessage(response.error);
+        return false;
+      }
+
+      return true;
+    } catch (caughtError) {
+      error.value = getErrorMessage(caughtError);
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  }
+  return { logOut, register, loading, error };
 }

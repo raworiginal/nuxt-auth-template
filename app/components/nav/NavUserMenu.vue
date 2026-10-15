@@ -15,7 +15,7 @@
       <li>
         <a class="justify-between"> Profile </a>
       </li>
-      <li><a>Logout</a></li>
+      <li><LogOutButton /></li>
     </ul>
   </div>
 </template>
