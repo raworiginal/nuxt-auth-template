@@ -3,3 +3,8 @@ export type RegisterInput = {
   name: string;
   password: string;
 };
+
+export type LoginInput = {
+  email: string;
+  password: string;
+};

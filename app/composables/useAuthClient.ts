@@ -1,4 +1,4 @@
-import { type RegisterInput } from "~/types/auth";
+import { type RegisterInput, type LoginInput } from "~/types/auth";
 function getErrorMessage(error: unknown): string {
   if (
     typeof error === "object" &&
@@ -40,6 +40,28 @@ export function useAuthClient() {
     }
   }
 
+  async function login(input: LoginInput) {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const response = await signIn.email({
+        email: input.email,
+        password: input.password,
+      });
+      if (response.error) {
+        error.value = getErrorMessage(response.error);
+        return null;
+      }
+      return response.data;
+    } catch (caughtError) {
+      error.value = getErrorMessage(caughtError);
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   async function logOut() {
     loading.value = true;
     error.value = null;
@@ -60,5 +82,5 @@ export function useAuthClient() {
       loading.value = false;
     }
   }
-  return { logOut, register, loading, error };
+  return { login, logOut, register, loading, error };
 }
