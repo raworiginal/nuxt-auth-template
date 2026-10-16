@@ -23,7 +23,7 @@ export function useAuthClient() {
     try {
       const response = await signUp.email({
         email: input.email,
-        name: input.email,
+        name: input.name,
         password: input.password,
       });
 

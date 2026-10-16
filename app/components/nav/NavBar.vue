@@ -1,3 +1,6 @@
+<script setup lang="ts">
+const session = useSession();
+</script>
 <template>
   <div class="max-lg:collapse bg-base-200 lg:mb-48 shadow-sm w-full rounded-md">
     <input id="navbar-1-toggle" class="peer hidden" type="checkbox" />
@@ -32,7 +35,7 @@
         <NavMenu menuClasses="menu menu-horizontal px-1" />
       </div>
 
-      <div class="navbar-end">
+      <div v-if="session.data" class="navbar-end">
         <NavUserMenu />
       </div>
     </div>
