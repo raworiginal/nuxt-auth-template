@@ -1,6 +1,5 @@
 <script setup lang="ts">
-const session = useSession();
-const user = session.value.data?.user;
+const { data: session } = await useSession(useFetch);
 </script>
 
 <template>
@@ -17,9 +16,9 @@ const user = session.value.data?.user;
       tabindex="-1"
       class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
     >
-      <li v-if="user">Hello, {{ user.name }}</li>
+      <li v-if="session">Hello, {{ session.user.name }}</li>
       <li>
-        <a class="justify-between"> Profile </a>
+        <NuxtLink to="/app/profile" class="justify-between"> Profile </NuxtLink>
       </li>
       <li><LogOutButton /></li>
     </ul>

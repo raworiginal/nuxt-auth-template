@@ -35,8 +35,8 @@ const session = useSession();
         <NavMenu menuClasses="menu menu-horizontal px-1" />
       </div>
 
-      <div v-if="session.data" class="navbar-end">
-        <NavUserMenu />
+      <div class="navbar-end">
+        <NavUserMenu v-if="session.data" />
       </div>
     </div>
 
