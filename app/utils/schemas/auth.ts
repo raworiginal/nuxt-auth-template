@@ -28,3 +28,14 @@ export const loginSchema = z.object({
 });
 
 export type LoginSchemaFormData = z.infer<typeof loginSchema>;
+
+export const profileSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(100, "Name must be 100 characters or fewer"),
+  image: z.url("Enter a valid URL").or(z.literal("")),
+});
+
+export type ProfileFormData = z.infer<typeof profileSchema>;

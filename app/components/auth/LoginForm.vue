@@ -31,10 +31,7 @@ async function handleSubmit() {
 
 <template>
   <form novalidate @submit.prevent="handleSubmit">
-    <fieldset
-      :disabled="loading"
-      class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4"
-    >
+    <Fieldset :disabled="loading">
       <legend class="fieldset-legend">Login</legend>
 
       <p v-if="authError" class="text-error mt-2" role="alert">
@@ -75,6 +72,6 @@ async function handleSubmit() {
       </p>
 
       <button class="btn btn-primary mt-4">Login</button>
-    </fieldset>
+    </Fieldset>
   </form>
 </template>

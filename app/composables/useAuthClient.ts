@@ -1,4 +1,9 @@
 import { type RegisterInput, type LoginInput } from "~/types/auth";
+
+type ProfileInput = {
+  name: string;
+  image: string | null;
+};
 function getErrorMessage(error: unknown): string {
   if (
     typeof error === "object" &&
@@ -82,5 +87,30 @@ export function useAuthClient() {
       loading.value = false;
     }
   }
-  return { login, logOut, register, loading, error };
+
+  async function updateProfile(input: ProfileInput) {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const response = await updateUser({
+        name: input.name,
+        image: input.image,
+      });
+
+      if (response.error) {
+        error.value = getErrorMessage(response.error);
+        return null;
+      }
+
+      return response.data;
+    } catch (caughtError) {
+      error.value = getErrorMessage(caughtError);
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  return { login, logOut, register, updateProfile, loading, error };
 }
