@@ -7,9 +7,17 @@ const { data: session } = await useSession(useFetch);
     <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
       <div class="w-10 rounded-full">
         <img
-          alt="Tailwind CSS Navbar component"
-          src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+          v-if="session?.user.image"
+          :src="session.user.image"
+          :alt="`${session.user.name}'s avatar`"
         />
+        <span
+          v-else
+          class="flex h-full w-full items-center justify-center bg-secondary text-secondary-content"
+          aria-hidden="true"
+        >
+          {{ session?.user.name?.charAt(0).toUpperCase() }}
+        </span>
       </div>
     </div>
     <ul
