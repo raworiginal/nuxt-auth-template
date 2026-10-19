@@ -1,9 +1,10 @@
-import { type RegisterInput, type LoginInput } from "~/types/auth";
-
-type ProfileInput = {
-  name: string;
-  image: string | null;
-};
+import { changePassword as authChangePassword } from "~/utils/auth-client";
+import type {
+  ChangePasswordInput,
+  LoginInput,
+  ProfileInput,
+  RegisterInput,
+} from "~/utils/schemas/auth";
 function getErrorMessage(error: unknown): string {
   if (
     typeof error === "object" &&
@@ -112,5 +113,34 @@ export function useAuthClient() {
     }
   }
 
-  return { login, logOut, register, updateProfile, loading, error };
+  async function changePassword(input: ChangePasswordInput) {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const response = await authChangePassword(input);
+
+      if (response.error) {
+        error.value = getErrorMessage(response.error);
+        return null;
+      }
+
+      return response.data;
+    } catch (caughtError) {
+      error.value = getErrorMessage(caughtError);
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  return {
+    changePassword,
+    login,
+    logOut,
+    register,
+    updateProfile,
+    loading,
+    error,
+  };
 }

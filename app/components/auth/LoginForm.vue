@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { loginSchema, type LoginSchemaFormData } from "~/utils/schemas/auth";
+import { loginSchema, type LoginFormData } from "~/utils/schemas/auth";
 const { login, loading, error: authError } = useAuthClient();
 
-const form = reactive<LoginSchemaFormData>({
+const form = reactive<LoginFormData>({
   email: "",
   password: "",
 });

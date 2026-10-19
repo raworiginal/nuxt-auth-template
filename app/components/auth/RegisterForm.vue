@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useAuthClient } from "~/composables/useAuthClient";
-import { registerSchema, type RegisterFromData } from "~/utils/schemas/auth";
+import { registerSchema, type RegisterFormData } from "~/utils/schemas/auth";
 
 const { register, loading, error: authError } = useAuthClient();
 
-const form = reactive<RegisterFromData>({
+const form = reactive<RegisterFormData>({
   email: "",
   name: "",
   password: "",

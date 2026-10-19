@@ -20,14 +20,14 @@ export const registerSchema = z
     path: ["confirmPassword"],
   });
 
-export type RegisterFromData = z.infer<typeof registerSchema>;
+export type RegisterFormData = z.infer<typeof registerSchema>;
 
 export const loginSchema = z.object({
   email: z.email("Enter a valid email address"),
   password: z.string(),
 });
 
-export type LoginSchemaFormData = z.infer<typeof loginSchema>;
+export type LoginFormData = z.infer<typeof loginSchema>;
 
 export const profileSchema = z.object({
   name: z
@@ -39,3 +39,29 @@ export const profileSchema = z.object({
 });
 
 export type ProfileFormData = z.infer<typeof profileSchema>;
+
+export const passwordChangeSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(128, "Password must be 128 characters or fewer"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type PasswordChangeFormData = z.infer<typeof passwordChangeSchema>;
+
+export type RegisterInput = Omit<RegisterFormData, "confirmPassword">;
+export type LoginInput = LoginFormData;
+export type ChangePasswordInput = Omit<
+  PasswordChangeFormData,
+  "confirmPassword"
+>;
+export type ProfileInput = Omit<ProfileFormData, "image"> & {
+  image: string | null;
+};
