@@ -54,12 +54,12 @@ export const passwordChangeSchema = z
     path: ["confirmPassword"],
   });
 
-export type PasswordChangeFormData = z.infer<typeof passwordChangeSchema>;
+export type ChangePasswordFormData = z.infer<typeof passwordChangeSchema>;
 
 export type RegisterInput = Omit<RegisterFormData, "confirmPassword">;
 export type LoginInput = LoginFormData;
 export type ChangePasswordInput = Omit<
-  PasswordChangeFormData,
+  ChangePasswordFormData,
   "confirmPassword"
 >;
 export type ProfileInput = Omit<ProfileFormData, "image"> & {

@@ -35,8 +35,7 @@ async function handleSubmit() {
 
 <template>
   <form novalidate @submit.prevent="handleSubmit">
-    <Fieldset :disabled="loading">
-      <legend class="fieldset-legend">Register</legend>
+    <Fieldset :disabled="loading" title="Register">
       <p v-if="authError" class="text-error mt-2" role="alert">
         {{ authError }}
       </p>
@@ -47,10 +46,17 @@ async function handleSubmit() {
         :errors="fieldErrors"
       />
 
-      <PasswordFields
+      <PasswordField
         v-model:password="form.password"
-        v-model:confirm-password="form.confirmPassword"
-        :errors="fieldErrors"
+        :error="fieldErrors.password"
+      />
+      <PasswordField
+        v-model:password="form.confirmPassword"
+        :error="fieldErrors.confirmPassword"
+        id="confirm-password"
+        placeholder="Confirm Password"
+        label="Confirm Password"
+        name="confirmPassword"
       />
       <button class="btn btn-primary mt-4" type="submit" :disabled="loading">
         <span v-if="loading" class="loading loading-spinner" />
