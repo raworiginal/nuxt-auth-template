@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { admin } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import getDatabase from "./utils/database";
 import * as authSchema from "./db/schema/auth-schema.ts";
@@ -11,4 +12,5 @@ export const auth = betterAuth({
     provider: "pg", // or "mysql", "sqlite"
     schema: authSchema,
   }),
+  plugins: [admin()],
 });
