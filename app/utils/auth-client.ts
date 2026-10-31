@@ -1,6 +1,8 @@
 import { createAuthClient } from "better-auth/vue";
-
-export const authClient = createAuthClient();
+import { adminClient } from "better-auth/client/plugins";
+export const authClient = createAuthClient({
+  plugins: [adminClient()],
+});
 export const {
   signIn,
   signUp,
@@ -8,4 +10,5 @@ export const {
   updateUser,
   changePassword,
   useSession,
+  admin,
 } = authClient;
