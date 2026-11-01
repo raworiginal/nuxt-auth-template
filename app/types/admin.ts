@@ -6,6 +6,9 @@ import {
   resetAdminUserPasswordSchema,
   banAdminUserSchema,
   unbanAdminUserSchema,
+  listAdminUserSessionsSchema,
+  adminUserSessionSchema,
+  listAdminUserSessionsResultSchema,
 } from "~/utils/schemas/admin";
 
 export type AdminUser = {
@@ -70,3 +73,11 @@ export type UnbanAdminUserInput = z.input<typeof unbanAdminUserSchema>;
 export type UnbanAdminUserResult = {
   user: AdminUser;
 };
+
+export type ListAdminUserSessionsInput = z.input<
+  typeof listAdminUserSessionsSchema
+>;
+export type AdminUserSession = z.infer<typeof adminUserSessionSchema>;
+export type ListAdminUserSessionsResult = z.infer<
+  typeof listAdminUserSessionsResultSchema
+>;
