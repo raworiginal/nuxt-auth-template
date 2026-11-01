@@ -32,6 +32,8 @@ const options = computed<ListUsersOptions>(() => ({
 }));
 
 const { users, total, loading, error, refresh } = await useAdminUsers(options);
+const editUser = ref<AdminUser | null>(null);
+const editOpen = ref(false);
 const resetUser = ref<AdminUser | null>(null);
 const resetOpen = ref(false);
 
@@ -58,10 +60,19 @@ async function handleSearch(search: ListUsersSearchOptions) {
   });
 }
 
+function handleEdit(user: AdminUser) {
+  editUser.value = user;
+  editOpen.value = true;
+}
+
 function handleResetPassword(user: AdminUser) {
   resetUser.value = user;
   resetOpen.value = true;
 }
+
+watch(editOpen, (isOpen) => {
+  if (!isOpen) editUser.value = null;
+});
 
 watch(resetOpen, (isOpen) => {
   if (!isOpen) resetUser.value = null;
@@ -70,6 +81,11 @@ watch(resetOpen, (isOpen) => {
 
 <template>
   <AdminCreateUserContainer @created="refresh" />
+  <AdminEditUserContainer
+    v-model:open="editOpen"
+    :user="editUser"
+    @updated="refresh"
+  />
   <AdminResetPasswordContainer
     v-model:open="resetOpen"
     :user="resetUser"
@@ -86,6 +102,7 @@ watch(resetOpen, (isOpen) => {
     :search-value="options.searchValue ?? ''"
     :search-field="options.searchField ?? 'name'"
     @search="handleSearch"
+    @edit="handleEdit"
     @reset-password="handleResetPassword"
     @page-size-change="updateOptions({ limit: $event, offset: 0 })"
     @page-change="updateOptions({ offset: $event })"

@@ -34,6 +34,17 @@ export const resetAdminUserPasswordSchema = z
     path: ["confirmPassword"],
   });
 
+export const editAdminUserSchema = z.object({
+  userId: z.string().min(1, "User is required"),
+  name: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(100, "Name must be 100 characters or fewer"),
+  email: z.email("Enter a valid email address"),
+  role: z.enum(["user", "admin"]),
+});
+
 export const listUsersOptionsSchema = z.object({
   limit: z.number().optional(),
   offset: z.number().optional(),
