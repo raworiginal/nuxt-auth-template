@@ -1,5 +1,3 @@
 <template>
-  <div>
-    <LoginForm />
-  </div>
+  <LoginContainer />
 </template>

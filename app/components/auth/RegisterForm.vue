@@ -1,8 +1,19 @@
 <script setup lang="ts">
-import { useAuthClient } from "~/composables/useAuthClient";
-import { registerSchema, type RegisterFormData } from "~/utils/schemas/auth";
+import type { RegisterFormData } from "~/types/auth";
 
-const { register, loading, error: authError } = useAuthClient();
+const {
+  loading,
+  error: authError,
+  fieldErrors,
+} = defineProps<{
+  loading: boolean;
+  error: string | null;
+  fieldErrors: Record<string, string>;
+}>();
+
+const emit = defineEmits<{
+  submit: [input: RegisterFormData];
+}>();
 
 const form = reactive<RegisterFormData>({
   email: "",
@@ -11,25 +22,8 @@ const form = reactive<RegisterFormData>({
   confirmPassword: "",
 });
 
-const fieldErrors = ref<Record<string, string>>({});
-
-async function handleSubmit() {
-  fieldErrors.value = {};
-
-  const result = registerSchema.safeParse(form);
-  if (!result.success) {
-    for (const issue of result.error.issues) {
-      const field = issue.path[0];
-      if (typeof field === "string" && !fieldErrors.value[field]) {
-        fieldErrors.value[field] = issue.message;
-      }
-    }
-    return;
-  }
-  const registeredUser = await register(result.data);
-  if (registeredUser) {
-    await navigateTo("/app");
-  }
+function handleSubmit() {
+  emit("submit", { ...form });
 }
 </script>
 

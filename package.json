@@ -7,9 +7,11 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "typecheck": "nuxt typecheck",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/better-auth": "^0.3.14",
     "@tailwindcss/vite": "^4.3.3",
     "better-auth": "^1.7.6",
     "daisyui": "^5.7.47",
@@ -26,6 +28,8 @@
   "devDependencies": {
     "@types/pg": "^8.23.1",
     "drizzle-kit": "1.0.0-rc.4",
-    "tsx": "^4.23.15"
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.3.14"
   }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const session = useSession();
+const { loggedIn, user } = useUserSession();
 </script>
 <template>
   <div class="max-lg:collapse bg-base-200 shadow-sm w-full rounded-md">
@@ -32,16 +32,16 @@ const session = useSession();
       </div>
 
       <div class="navbar-center hidden lg:flex">
-        <NavMenu menuClasses="menu menu-horizontal px-1" />
+        <NavMenu :logged-in="loggedIn" menuClasses="menu menu-horizontal px-1" />
       </div>
 
       <div class="navbar-end">
-        <NavUserMenu v-if="session.data" />
+        <NavUserMenu v-if="loggedIn" :user="user" />
       </div>
     </div>
 
     <div class="collapse-content lg:hidden z-1">
-      <NavMenu />
+      <NavMenu :logged-in="loggedIn" />
     </div>
   </div>
 </template>

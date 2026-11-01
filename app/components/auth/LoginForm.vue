@@ -1,31 +1,27 @@
 <script setup lang="ts">
-import { loginSchema, type LoginFormData } from "~/utils/schemas/auth";
-const { login, loading, error: authError } = useAuthClient();
+import type { LoginFormData } from "~/types/auth";
+
+const {
+  loading,
+  error: authError,
+  fieldErrors,
+} = defineProps<{
+  loading: boolean;
+  error: string | null;
+  fieldErrors: Record<string, string>;
+}>();
+
+const emit = defineEmits<{
+  submit: [input: LoginFormData];
+}>();
 
 const form = reactive<LoginFormData>({
   email: "",
   password: "",
 });
 
-const fieldErrors = ref<Record<string, string>>({});
-
-async function handleSubmit() {
-  fieldErrors.value = {};
-
-  const result = loginSchema.safeParse(form);
-  if (!result.success) {
-    for (const issue of result.error.issues) {
-      const field = issue.path[0];
-      if (typeof field === "string" && !fieldErrors.value[field]) {
-        fieldErrors.value[field] = issue.message;
-      }
-    }
-    return;
-  }
-  const loggedInUser = await login(result.data);
-  if (loggedInUser) {
-    await navigateTo("/app");
-  }
+function handleSubmit() {
+  emit("submit", { ...form });
 }
 </script>
 
