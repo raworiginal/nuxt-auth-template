@@ -20,14 +20,10 @@ export const registerSchema = z
     path: ["confirmPassword"],
   });
 
-export type RegisterFormData = z.infer<typeof registerSchema>;
-
 export const loginSchema = z.object({
   email: z.email("Enter a valid email address"),
   password: z.string(),
 });
-
-export type LoginFormData = z.infer<typeof loginSchema>;
 
 export const profileSchema = z.object({
   name: z
@@ -37,8 +33,6 @@ export const profileSchema = z.object({
     .max(100, "Name must be 100 characters or fewer"),
   image: z.url("Enter a valid URL").or(z.literal("")),
 });
-
-export type ProfileFormData = z.infer<typeof profileSchema>;
 
 export const passwordChangeSchema = z
   .object({
@@ -53,15 +47,3 @@ export const passwordChangeSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
-
-export type ChangePasswordFormData = z.infer<typeof passwordChangeSchema>;
-
-export type RegisterInput = Omit<RegisterFormData, "confirmPassword">;
-export type LoginInput = LoginFormData;
-export type ChangePasswordInput = Omit<
-  ChangePasswordFormData,
-  "confirmPassword"
->;
-export type ProfileInput = Omit<ProfileFormData, "image"> & {
-  image: string | null;
-};

@@ -1,0 +1,74 @@
+<script setup lang="ts">
+import {
+  ADMIN_USERS_PAGE_SIZE_OPTIONS,
+  DEFAULT_ADMIN_USERS_PAGE_SIZE,
+} from "~/utils/constants/admin";
+import type { ListUsersOptions, ListUsersSearchOptions } from "~/types/admin";
+
+const route = useRoute();
+const router = useRouter();
+
+function parseQueryNumber(value: unknown, fallback: number) {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
+}
+
+const options = computed<ListUsersOptions>(() => ({
+  limit: parseQueryNumber(
+    route.query.limit,
+    DEFAULT_ADMIN_USERS_PAGE_SIZE,
+  ),
+  offset: parseQueryNumber(route.query.offset, 0),
+  searchValue:
+    typeof route.query.searchValue === "string"
+      ? route.query.searchValue
+      : undefined,
+  searchField:
+    route.query.searchField === "email" || route.query.searchField === "name"
+      ? route.query.searchField
+      : "name",
+  searchOperator: "contains",
+}));
+
+const { users, total, loading, error } = await useAdminUsers(options);
+
+async function updateOptions(next: Partial<ListUsersOptions>) {
+  const query = { ...route.query };
+
+  for (const [key, value] of Object.entries(next)) {
+    if (value === undefined || value === "") {
+      delete query[key];
+    } else {
+      query[key] = String(value);
+    }
+  }
+
+  await router.replace({
+    query,
+  });
+}
+
+async function handleSearch(search: ListUsersSearchOptions) {
+  await updateOptions({
+    ...search,
+    offset: 0,
+  });
+}
+</script>
+
+<template>
+  <AdminUsersList
+    :users="users"
+    :total="total"
+    :loading="loading"
+    :error="error"
+    :limit="options.limit"
+    :offset="options.offset"
+    :page-size-options="ADMIN_USERS_PAGE_SIZE_OPTIONS"
+    :search-value="options.searchValue ?? ''"
+    :search-field="options.searchField ?? 'name'"
+    @search="handleSearch"
+    @page-size-change="updateOptions({ limit: $event, offset: 0 })"
+    @page-change="updateOptions({ offset: $event })"
+  />
+</template>

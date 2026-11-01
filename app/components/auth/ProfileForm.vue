@@ -1,45 +1,31 @@
 <script setup lang="ts">
-import { profileSchema, type ProfileFormData } from "~/utils/schemas/auth";
+import type { ProfileFormData } from "~/types/auth";
 
-const props = defineProps<{
+const {
+  user,
+  loading,
+  error: authError,
+  successMessage,
+  fieldErrors,
+} = defineProps<{
   user: ProfileFormData;
+  loading: boolean;
+  error: string | null;
+  successMessage: string | null;
+  fieldErrors: Record<string, string>;
 }>();
 
-const { updateProfile, loading, error: authError } = useAuthClient();
+const emit = defineEmits<{
+  submit: [input: ProfileFormData];
+}>();
 
 const form = reactive<ProfileFormData>({
-  name: props.user.name,
-  image: props.user.image,
+  name: user.name,
+  image: user.image,
 });
 
-const fieldErrors = ref<Record<string, string>>({});
-const successMessage = ref<string | null>(null);
-
-async function handleSubmit() {
-  fieldErrors.value = {};
-  successMessage.value = null;
-
-  const result = profileSchema.safeParse(form);
-  if (!result.success) {
-    for (const issue of result.error.issues) {
-      const field = issue.path[0];
-
-      if (typeof field === "string" && !fieldErrors.value[field]) {
-        fieldErrors.value[field] = issue.message;
-      }
-    }
-
-    return;
-  }
-
-  const updatedUser = await updateProfile({
-    name: result.data.name,
-    image: result.data.image || null,
-  });
-
-  if (updatedUser) {
-    successMessage.value = "Profile updated successfully.";
-  }
+function handleSubmit() {
+  emit("submit", { ...form });
 }
 </script>
 

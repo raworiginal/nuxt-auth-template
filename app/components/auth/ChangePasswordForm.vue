@@ -1,10 +1,21 @@
 <script setup lang="ts">
-import {
-  passwordChangeSchema,
-  type ChangePasswordFormData,
-} from "~/utils/schemas/auth";
+import type { ChangePasswordFormData } from "~/types/auth";
 
-const { changePassword, loading, error: authError } = useAuthClient();
+const {
+  loading,
+  error: authError,
+  successMessage,
+  fieldErrors,
+} = defineProps<{
+  loading: boolean;
+  error: string | null;
+  successMessage: string | null;
+  fieldErrors: Record<string, string>;
+}>();
+
+const emit = defineEmits<{
+  submit: [input: ChangePasswordFormData];
+}>();
 
 const form = reactive<ChangePasswordFormData>({
   currentPassword: "",
@@ -12,37 +23,8 @@ const form = reactive<ChangePasswordFormData>({
   confirmPassword: "",
 });
 
-const fieldErrors = ref<Record<string, string>>({});
-const successMessage = ref<string | null>(null);
-
-async function handleSubmit() {
-  fieldErrors.value = {};
-  successMessage.value = null;
-
-  const result = passwordChangeSchema.safeParse(form);
-  if (!result.success) {
-    for (const issue of result.error.issues) {
-      const field = issue.path[0];
-
-      if (typeof field === "string" && !fieldErrors.value[field]) {
-        fieldErrors.value[field] = issue.message;
-      }
-    }
-
-    return;
-  }
-
-  const changedPassword = await changePassword({
-    currentPassword: result.data.currentPassword,
-    newPassword: result.data.newPassword,
-  });
-
-  if (!changedPassword) return;
-
-  form.currentPassword = "";
-  form.newPassword = "";
-  form.confirmPassword = "";
-  successMessage.value = "Password changed successfully.";
+function handleSubmit() {
+  emit("submit", { ...form });
 }
 </script>
 

@@ -1,12 +1,13 @@
 <script setup lang="ts">
-const { loading, logOut } = useAuthClient();
-async function handleLogout() {
-  const success = await logOut();
-  if (success) {
-    await navigateTo("/login");
-  }
-}
+defineProps<{
+  loading: boolean;
+}>();
+
+const emit = defineEmits<{
+  click: [];
+}>();
 </script>
+
 <template>
-  <button :disabled="loading" @click="handleLogout">Logout</button>
+  <button :disabled="loading" @click="emit('click')">Logout</button>
 </template>
