@@ -30,7 +30,7 @@ const options = computed<ListUsersOptions>(() => ({
   searchOperator: "contains",
 }));
 
-const { users, total, loading, error } = await useAdminUsers(options);
+const { users, total, loading, error, refresh } = await useAdminUsers(options);
 
 async function updateOptions(next: Partial<ListUsersOptions>) {
   const query = { ...route.query };
@@ -57,6 +57,7 @@ async function handleSearch(search: ListUsersSearchOptions) {
 </script>
 
 <template>
+  <AdminCreateUserContainer @created="refresh" />
   <AdminUsersList
     :users="users"
     :total="total"
