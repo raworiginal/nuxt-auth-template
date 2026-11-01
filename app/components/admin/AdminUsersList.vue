@@ -22,6 +22,7 @@ const emit = defineEmits<{
   resetPassword: [user: AdminUser];
   ban: [user: AdminUser];
   unban: [user: AdminUser];
+  remove: [user: AdminUser];
   viewSessions: [user: AdminUser];
   pageChange: [offset: number];
   pageSizeChange: [limit: number];
@@ -148,6 +149,13 @@ function submitSearch() {
                   @click="emit('viewSessions', user)"
                 >
                   View sessions
+                </button>
+                <button
+                  class="btn btn-sm btn-error ml-2"
+                  type="button"
+                  @click="emit('remove', user)"
+                >
+                  Remove
                 </button>
               </td>
             </tr>

@@ -106,3 +106,7 @@ export const revokeAdminUserSessionResultSchema = z.object({
 export const revokeAllAdminUserSessionsResultSchema = z.object({
   success: z.boolean(),
 });
+
+export const removeAdminUserResultSchema = z.object({
+  success: z.boolean(),
+});

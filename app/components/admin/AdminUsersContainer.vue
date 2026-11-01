@@ -42,6 +42,9 @@ const unbanUser = ref<AdminUser | null>(null);
 const unbanOpen = ref(false);
 const sessionsUser = ref<AdminUser | null>(null);
 const sessionsOpen = ref(false);
+const removeUser = ref<AdminUser | null>(null);
+const removeOpen = ref(false);
+const removeStatus = ref<string | null>(null);
 
 async function updateOptions(next: Partial<ListUsersOptions>) {
   const query = { ...route.query };
@@ -91,6 +94,17 @@ function handleViewSessions(user: AdminUser) {
   sessionsOpen.value = true;
 }
 
+function handleRemove(user: AdminUser) {
+  removeStatus.value = null;
+  removeUser.value = user;
+  removeOpen.value = true;
+}
+
+function handleRemoved() {
+  removeStatus.value = "User removed successfully.";
+  void refresh();
+}
+
 watch(editOpen, (isOpen) => {
   if (!isOpen) editUser.value = null;
 });
@@ -109,6 +123,10 @@ watch(unbanOpen, (isOpen) => {
 
 watch(sessionsOpen, (isOpen) => {
   if (!isOpen) sessionsUser.value = null;
+});
+
+watch(removeOpen, (isOpen) => {
+  if (!isOpen) removeUser.value = null;
 });
 </script>
 
@@ -138,6 +156,14 @@ watch(sessionsOpen, (isOpen) => {
     v-model:open="sessionsOpen"
     :user="sessionsUser"
   />
+  <AdminRemoveUserContainer
+    v-model:open="removeOpen"
+    :user="removeUser"
+    @removed="handleRemoved"
+  />
+  <p v-if="removeStatus" class="sr-only" role="status" aria-live="polite">
+    {{ removeStatus }}
+  </p>
   <AdminUsersList
     :users="users"
     :total="total"
@@ -153,6 +179,7 @@ watch(sessionsOpen, (isOpen) => {
     @reset-password="handleResetPassword"
     @ban="handleBan"
     @unban="handleUnban"
+    @remove="handleRemove"
     @view-sessions="handleViewSessions"
     @page-size-change="updateOptions({ limit: $event, offset: 0 })"
     @page-change="updateOptions({ offset: $event })"

@@ -14,6 +14,7 @@ import {
   revokeAllAdminUserSessionsSchema,
   revokeAdminUserSessionResultSchema,
   revokeAllAdminUserSessionsResultSchema,
+  removeAdminUserResultSchema,
 } from "~/utils/schemas/admin";
 
 export type AdminUser = {
@@ -98,4 +99,8 @@ export type RevokeAllAdminUserSessionsInput = z.input<
 >;
 export type RevokeAllAdminUserSessionsResult = z.infer<
   typeof revokeAllAdminUserSessionsResultSchema
+>;
+export type RemoveAdminUserInput = z.input<typeof selectedAdminUserIdSchema>;
+export type RemoveAdminUserResult = z.infer<
+  typeof removeAdminUserResultSchema
 >;
