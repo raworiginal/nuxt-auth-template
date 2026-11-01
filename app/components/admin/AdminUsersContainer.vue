@@ -36,6 +36,10 @@ const editUser = ref<AdminUser | null>(null);
 const editOpen = ref(false);
 const resetUser = ref<AdminUser | null>(null);
 const resetOpen = ref(false);
+const banUser = ref<AdminUser | null>(null);
+const banOpen = ref(false);
+const unbanUser = ref<AdminUser | null>(null);
+const unbanOpen = ref(false);
 
 async function updateOptions(next: Partial<ListUsersOptions>) {
   const query = { ...route.query };
@@ -70,12 +74,30 @@ function handleResetPassword(user: AdminUser) {
   resetOpen.value = true;
 }
 
+function handleBan(user: AdminUser) {
+  banUser.value = user;
+  banOpen.value = true;
+}
+
+function handleUnban(user: AdminUser) {
+  unbanUser.value = user;
+  unbanOpen.value = true;
+}
+
 watch(editOpen, (isOpen) => {
   if (!isOpen) editUser.value = null;
 });
 
 watch(resetOpen, (isOpen) => {
   if (!isOpen) resetUser.value = null;
+});
+
+watch(banOpen, (isOpen) => {
+  if (!isOpen) banUser.value = null;
+});
+
+watch(unbanOpen, (isOpen) => {
+  if (!isOpen) unbanUser.value = null;
 });
 </script>
 
@@ -91,6 +113,16 @@ watch(resetOpen, (isOpen) => {
     :user="resetUser"
     @reset="refresh"
   />
+  <AdminBanUserContainer
+    v-model:open="banOpen"
+    :user="banUser"
+    @banned="refresh"
+  />
+  <AdminUnbanUserContainer
+    v-model:open="unbanOpen"
+    :user="unbanUser"
+    @unbanned="refresh"
+  />
   <AdminUsersList
     :users="users"
     :total="total"
@@ -104,6 +136,8 @@ watch(resetOpen, (isOpen) => {
     @search="handleSearch"
     @edit="handleEdit"
     @reset-password="handleResetPassword"
+    @ban="handleBan"
+    @unban="handleUnban"
     @page-size-change="updateOptions({ limit: $event, offset: 0 })"
     @page-change="updateOptions({ offset: $event })"
   />

@@ -45,6 +45,25 @@ export const editAdminUserSchema = z.object({
   role: z.enum(["user", "admin"]),
 });
 
+export const banAdminUserSchema = z.object({
+  userId: z.string().min(1, "User is required"),
+  banReason: z
+    .string()
+    .trim()
+    .max(500, "Ban reason must be 500 characters or fewer")
+    .optional(),
+  duration: z
+    .number({ error: "Duration must be a number" })
+    .positive("Duration must be greater than zero")
+    .finite("Duration must be finite")
+    .optional(),
+  durationUnit: z.enum(["seconds", "minutes", "hours", "days"]),
+});
+
+export const unbanAdminUserSchema = z.object({
+  userId: z.string().min(1, "User is required"),
+});
+
 export const listUsersOptionsSchema = z.object({
   limit: z.number().optional(),
   offset: z.number().optional(),
