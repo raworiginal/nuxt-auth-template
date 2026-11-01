@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
       body: { userId: string };
       headers: Record<string, string>;
     }) => Promise<{
-      sessions: Array<{ createdAt: Date; expiresAt: Date }>;
+      sessions: Array<{ id: string; createdAt: Date; expiresAt: Date }>;
     }>;
   }).listUserSessions;
   const result = await listUserSessions({
@@ -31,6 +31,7 @@ export default defineEventHandler(async (event) => {
   return {
     userId: parsed.data.userId,
     sessions: result.sessions.map((session) => ({
+      id: session.id,
       createdAt: session.createdAt.toISOString(),
       expiresAt: session.expiresAt.toISOString(),
     })),
