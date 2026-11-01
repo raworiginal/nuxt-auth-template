@@ -4,6 +4,7 @@ import {
   DEFAULT_ADMIN_USERS_PAGE_SIZE,
 } from "~/utils/constants/admin";
 import type { ListUsersOptions, ListUsersSearchOptions } from "~/types/admin";
+import type { AdminUser } from "~/types/admin";
 
 const route = useRoute();
 const router = useRouter();
@@ -31,6 +32,8 @@ const options = computed<ListUsersOptions>(() => ({
 }));
 
 const { users, total, loading, error, refresh } = await useAdminUsers(options);
+const resetUser = ref<AdminUser | null>(null);
+const resetOpen = ref(false);
 
 async function updateOptions(next: Partial<ListUsersOptions>) {
   const query = { ...route.query };
@@ -54,10 +57,24 @@ async function handleSearch(search: ListUsersSearchOptions) {
     offset: 0,
   });
 }
+
+function handleResetPassword(user: AdminUser) {
+  resetUser.value = user;
+  resetOpen.value = true;
+}
+
+watch(resetOpen, (isOpen) => {
+  if (!isOpen) resetUser.value = null;
+});
 </script>
 
 <template>
   <AdminCreateUserContainer @created="refresh" />
+  <AdminResetPasswordContainer
+    v-model:open="resetOpen"
+    :user="resetUser"
+    @reset="refresh"
+  />
   <AdminUsersList
     :users="users"
     :total="total"
@@ -69,6 +86,7 @@ async function handleSearch(search: ListUsersSearchOptions) {
     :search-value="options.searchValue ?? ''"
     :search-field="options.searchField ?? 'name'"
     @search="handleSearch"
+    @reset-password="handleResetPassword"
     @page-size-change="updateOptions({ limit: $event, offset: 0 })"
     @page-change="updateOptions({ offset: $event })"
   />

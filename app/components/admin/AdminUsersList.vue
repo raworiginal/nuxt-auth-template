@@ -18,6 +18,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   search: [options: ListUsersSearchOptions];
+  resetPassword: [user: AdminUser];
   pageChange: [offset: number];
   pageSizeChange: [limit: number];
 }>();
@@ -87,6 +88,7 @@ function submitSearch() {
               <th>Name</th>
               <th>Email</th>
               <th>Role</th>
+              <th><span class="sr-only">Actions</span></th>
             </tr>
           </thead>
           <tbody>
@@ -94,6 +96,15 @@ function submitSearch() {
               <td>{{ user.name }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.role ?? "user" }}</td>
+              <td>
+                <button
+                  class="btn btn-sm"
+                  type="button"
+                  @click="emit('resetPassword', user)"
+                >
+                  Reset password
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
