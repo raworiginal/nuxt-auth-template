@@ -78,7 +78,18 @@ export const listAdminUserSessionsSchema = z.object({
   userId: z.string().trim().min(1, "User is required"),
 });
 
+export const selectedAdminUserIdSchema = z.object({
+  userId: z.string().trim().min(1, "User is required"),
+});
+
+export const selectedAdminUserSessionIdSchema = selectedAdminUserIdSchema.extend({
+  sessionId: z.string().trim().min(1, "Session is required"),
+});
+
+export const revokeAllAdminUserSessionsSchema = selectedAdminUserIdSchema;
+
 export const adminUserSessionSchema = z.object({
+  id: z.string().min(1),
   createdAt: z.string().min(1),
   expiresAt: z.string().min(1),
 });
@@ -86,4 +97,12 @@ export const adminUserSessionSchema = z.object({
 export const listAdminUserSessionsResultSchema = z.object({
   userId: z.string().min(1),
   sessions: z.array(adminUserSessionSchema),
+});
+
+export const revokeAdminUserSessionResultSchema = z.object({
+  success: z.boolean(),
+});
+
+export const revokeAllAdminUserSessionsResultSchema = z.object({
+  success: z.boolean(),
 });

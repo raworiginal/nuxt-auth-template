@@ -9,6 +9,11 @@ import {
   listAdminUserSessionsSchema,
   adminUserSessionSchema,
   listAdminUserSessionsResultSchema,
+  selectedAdminUserSessionIdSchema,
+  selectedAdminUserIdSchema,
+  revokeAllAdminUserSessionsSchema,
+  revokeAdminUserSessionResultSchema,
+  revokeAllAdminUserSessionsResultSchema,
 } from "~/utils/schemas/admin";
 
 export type AdminUser = {
@@ -80,4 +85,17 @@ export type ListAdminUserSessionsInput = z.input<
 export type AdminUserSession = z.infer<typeof adminUserSessionSchema>;
 export type ListAdminUserSessionsResult = z.infer<
   typeof listAdminUserSessionsResultSchema
+>;
+export type RevokeAdminUserSessionInput = z.input<
+  typeof selectedAdminUserSessionIdSchema
+>;
+export type SelectedAdminUserIdInput = z.input<typeof selectedAdminUserIdSchema>;
+export type RevokeAdminUserSessionResult = z.infer<
+  typeof revokeAdminUserSessionResultSchema
+>;
+export type RevokeAllAdminUserSessionsInput = z.input<
+  typeof revokeAllAdminUserSessionsSchema
+>;
+export type RevokeAllAdminUserSessionsResult = z.infer<
+  typeof revokeAllAdminUserSessionsResultSchema
 >;
