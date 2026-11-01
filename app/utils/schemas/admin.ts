@@ -73,3 +73,17 @@ export const listUsersOptionsSchema = z.object({
     .enum(["contains", "starts_with", "ends_with"])
     .optional(),
 });
+
+export const listAdminUserSessionsSchema = z.object({
+  userId: z.string().trim().min(1, "User is required"),
+});
+
+export const adminUserSessionSchema = z.object({
+  createdAt: z.string().min(1),
+  expiresAt: z.string().min(1),
+});
+
+export const listAdminUserSessionsResultSchema = z.object({
+  userId: z.string().min(1),
+  sessions: z.array(adminUserSessionSchema),
+});

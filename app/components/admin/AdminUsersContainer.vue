@@ -40,6 +40,8 @@ const banUser = ref<AdminUser | null>(null);
 const banOpen = ref(false);
 const unbanUser = ref<AdminUser | null>(null);
 const unbanOpen = ref(false);
+const sessionsUser = ref<AdminUser | null>(null);
+const sessionsOpen = ref(false);
 
 async function updateOptions(next: Partial<ListUsersOptions>) {
   const query = { ...route.query };
@@ -84,6 +86,11 @@ function handleUnban(user: AdminUser) {
   unbanOpen.value = true;
 }
 
+function handleViewSessions(user: AdminUser) {
+  sessionsUser.value = user;
+  sessionsOpen.value = true;
+}
+
 watch(editOpen, (isOpen) => {
   if (!isOpen) editUser.value = null;
 });
@@ -98,6 +105,10 @@ watch(banOpen, (isOpen) => {
 
 watch(unbanOpen, (isOpen) => {
   if (!isOpen) unbanUser.value = null;
+});
+
+watch(sessionsOpen, (isOpen) => {
+  if (!isOpen) sessionsUser.value = null;
 });
 </script>
 
@@ -123,6 +134,10 @@ watch(unbanOpen, (isOpen) => {
     :user="unbanUser"
     @unbanned="refresh"
   />
+  <AdminUserSessionsContainer
+    v-model:open="sessionsOpen"
+    :user="sessionsUser"
+  />
   <AdminUsersList
     :users="users"
     :total="total"
@@ -138,6 +153,7 @@ watch(unbanOpen, (isOpen) => {
     @reset-password="handleResetPassword"
     @ban="handleBan"
     @unban="handleUnban"
+    @view-sessions="handleViewSessions"
     @page-size-change="updateOptions({ limit: $event, offset: 0 })"
     @page-change="updateOptions({ offset: $event })"
   />
