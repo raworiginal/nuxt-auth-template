@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   createAdminUserSchema,
   listUsersOptionsSchema,
+  resetAdminUserPasswordSchema,
 } from "~/utils/schemas/admin";
 
 export type AdminUser = {
@@ -30,4 +31,15 @@ export type CreateAdminUserFormData = z.input<typeof createAdminUserSchema>;
 export type CreateAdminUserInput = z.output<typeof createAdminUserSchema>;
 export type CreateAdminUserResult = {
   user: AdminUser;
+};
+
+export type ResetAdminUserPasswordFormData = Omit<
+  z.input<typeof resetAdminUserPasswordSchema>,
+  "userId"
+>;
+export type ResetAdminUserPasswordInput = z.input<
+  typeof resetAdminUserPasswordSchema
+>;
+export type ResetAdminUserPasswordResult = {
+  status: boolean;
 };

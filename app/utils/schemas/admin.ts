@@ -20,6 +20,20 @@ export const createAdminUserSchema = z
     path: ["confirmPassword"],
   });
 
+export const resetAdminUserPasswordSchema = z
+  .object({
+    userId: z.string().min(1, "User is required"),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(128, "Password must be 128 characters or fewer"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
 export const listUsersOptionsSchema = z.object({
   limit: z.number().optional(),
   offset: z.number().optional(),
