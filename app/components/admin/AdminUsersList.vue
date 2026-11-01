@@ -20,6 +20,8 @@ const emit = defineEmits<{
   search: [options: ListUsersSearchOptions];
   edit: [user: AdminUser];
   resetPassword: [user: AdminUser];
+  ban: [user: AdminUser];
+  unban: [user: AdminUser];
   pageChange: [offset: number];
   pageSizeChange: [limit: number];
 }>();
@@ -89,6 +91,7 @@ function submitSearch() {
               <th>Name</th>
               <th>Email</th>
               <th>Role</th>
+              <th>Status</th>
               <th><span class="sr-only">Actions</span></th>
             </tr>
           </thead>
@@ -97,6 +100,16 @@ function submitSearch() {
               <td>{{ user.name }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.role ?? "user" }}</td>
+              <td>
+                <span v-if="user.banned" class="text-error">Banned</span>
+                <span v-else>Active</span>
+                <span v-if="user.banned && user.banReason" class="block text-sm">
+                  {{ user.banReason }}
+                </span>
+                <span v-if="user.banned && user.banExpires" class="block text-sm">
+                  Expires: {{ new Date(user.banExpires).toLocaleString() }}
+                </span>
+              </td>
               <td>
                 <button
                   class="btn btn-sm"
@@ -111,6 +124,22 @@ function submitSearch() {
                   @click="emit('resetPassword', user)"
                 >
                   Reset password
+                </button>
+                <button
+                  v-if="user.banned"
+                  class="btn btn-sm ml-2"
+                  type="button"
+                  @click="emit('unban', user)"
+                >
+                  Unban
+                </button>
+                <button
+                  v-else
+                  class="btn btn-sm ml-2"
+                  type="button"
+                  @click="emit('ban', user)"
+                >
+                  Ban
                 </button>
               </td>
             </tr>

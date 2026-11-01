@@ -4,6 +4,8 @@ import {
   editAdminUserSchema,
   listUsersOptionsSchema,
   resetAdminUserPasswordSchema,
+  banAdminUserSchema,
+  unbanAdminUserSchema,
 } from "~/utils/schemas/admin";
 
 export type AdminUser = {
@@ -11,6 +13,9 @@ export type AdminUser = {
   name: string;
   email: string;
   role?: string | null;
+  banned?: boolean | null;
+  banReason?: string | null;
+  banExpires?: string | Date | null;
 };
 
 export type ListUsersSearchOptions = {
@@ -51,3 +56,17 @@ export type EditAdminUserFormData = Omit<
 >;
 export type EditAdminUserInput = z.output<typeof editAdminUserSchema>;
 export type EditAdminUserResult = AdminUser;
+
+export type BanAdminUserFormData = Omit<
+  z.input<typeof banAdminUserSchema>,
+  "userId"
+>;
+export type BanAdminUserInput = z.input<typeof banAdminUserSchema>;
+export type BanAdminUserResult = {
+  user: AdminUser;
+};
+
+export type UnbanAdminUserInput = z.input<typeof unbanAdminUserSchema>;
+export type UnbanAdminUserResult = {
+  user: AdminUser;
+};
