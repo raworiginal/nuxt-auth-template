@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { listUsersOptionsSchema } from "~/utils/schemas/admin";
+import {
+  createAdminUserSchema,
+  listUsersOptionsSchema,
+} from "~/utils/schemas/admin";
 
 export type AdminUser = {
   id: string;
@@ -22,3 +25,9 @@ export type ListUsersResult = {
 };
 
 export type ListUsersOptions = z.infer<typeof listUsersOptionsSchema>;
+
+export type CreateAdminUserFormData = z.input<typeof createAdminUserSchema>;
+export type CreateAdminUserInput = z.output<typeof createAdminUserSchema>;
+export type CreateAdminUserResult = {
+  user: AdminUser;
+};
