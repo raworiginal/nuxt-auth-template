@@ -8,7 +8,7 @@ defineProps<{
 
 const emit = defineEmits<{
   search: [options: ListUsersSearchOptions];
-  created: [];
+  create: [];
 }>();
 </script>
 
@@ -18,5 +18,7 @@ const emit = defineEmits<{
     :search-field="searchField"
     @search="emit('search', $event)"
   />
-  <AdminCreateUserContainer @created="emit('created')" />
+  <button class="btn btn-primary" type="button" @click="emit('create')">
+    Create user
+  </button>
 </template>

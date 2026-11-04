@@ -5,10 +5,11 @@ const emit = defineEmits<{
   created: [];
 }>();
 
+const open = defineModel<boolean>("open", { required: true });
+
 const { fieldErrors, loading, error, successMessage, submit } =
   useCreateAdminUser();
 
-const open = ref(false);
 const formKey = ref(0);
 
 watch(successMessage, (message) => {
@@ -24,10 +25,6 @@ function handleSubmit(input: CreateAdminUserFormData) {
 </script>
 
 <template>
-  <button class="btn btn-primary" type="button" @click="open = true">
-    Create user
-  </button>
-
   <AppModal v-model:open="open" title="Create user" :close-disabled="loading">
     <AdminCreateUserForm
       :key="formKey"

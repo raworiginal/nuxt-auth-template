@@ -22,7 +22,7 @@ function openDialog(
   <main>
     <h1>Users</h1>
 
-    <AdminUsersToolbar
+    <AdminUsersToolbarContainer
       :search-value="options.searchValue ?? ''"
       :search-field="options.searchField ?? 'name'"
       @search="handleSearch"
