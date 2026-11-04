@@ -15,10 +15,7 @@ function parseQueryNumber(value: unknown, fallback: number) {
 }
 
 const options = computed<ListUsersOptions>(() => ({
-  limit: parseQueryNumber(
-    route.query.limit,
-    DEFAULT_ADMIN_USERS_PAGE_SIZE,
-  ),
+  limit: parseQueryNumber(route.query.limit, DEFAULT_ADMIN_USERS_PAGE_SIZE),
   offset: parseQueryNumber(route.query.offset, 0),
   searchValue:
     typeof route.query.searchValue === "string"
@@ -132,6 +129,7 @@ watch(removeOpen, (isOpen) => {
 
 <template>
   <AdminCreateUserContainer @created="refresh" />
+
   <AdminEditUserContainer
     v-model:open="editOpen"
     :user="editUser"
@@ -161,9 +159,11 @@ watch(removeOpen, (isOpen) => {
     :user="removeUser"
     @removed="handleRemoved"
   />
+
   <p v-if="removeStatus" class="sr-only" role="status" aria-live="polite">
     {{ removeStatus }}
   </p>
+
   <AdminUsersList
     :users="users"
     :total="total"
