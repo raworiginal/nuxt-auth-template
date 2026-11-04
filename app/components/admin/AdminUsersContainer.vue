@@ -128,8 +128,6 @@ watch(removeOpen, (isOpen) => {
 </script>
 
 <template>
-  <AdminCreateUserContainer @created="refresh" />
-
   <AdminEditUserContainer
     v-model:open="editOpen"
     :user="editUser"
@@ -164,24 +162,32 @@ watch(removeOpen, (isOpen) => {
     {{ removeStatus }}
   </p>
 
-  <AdminUsersList
-    :users="users"
-    :total="total"
-    :loading="loading"
-    :error="error"
-    :limit="options.limit"
-    :offset="options.offset"
-    :page-size-options="ADMIN_USERS_PAGE_SIZE_OPTIONS"
-    :search-value="options.searchValue ?? ''"
-    :search-field="options.searchField ?? 'name'"
-    @search="handleSearch"
-    @edit="handleEdit"
-    @reset-password="handleResetPassword"
-    @ban="handleBan"
-    @unban="handleUnban"
-    @remove="handleRemove"
-    @view-sessions="handleViewSessions"
-    @page-size-change="updateOptions({ limit: $event, offset: 0 })"
-    @page-change="updateOptions({ offset: $event })"
-  />
+  <main>
+    <h1>Users</h1>
+
+    <AdminUsersSearch
+      :search-value="options.searchValue ?? ''"
+      :search-field="options.searchField ?? 'name'"
+      @search="handleSearch"
+    />
+    <AdminCreateUserContainer @created="refresh" />
+
+    <AdminUsersList
+      :users="users"
+      :total="total"
+      :loading="loading"
+      :error="error"
+      :limit="options.limit"
+      :offset="options.offset"
+      :page-size-options="ADMIN_USERS_PAGE_SIZE_OPTIONS"
+      @edit="handleEdit"
+      @reset-password="handleResetPassword"
+      @ban="handleBan"
+      @unban="handleUnban"
+      @remove="handleRemove"
+      @view-sessions="handleViewSessions"
+      @page-size-change="updateOptions({ limit: $event, offset: 0 })"
+      @page-change="updateOptions({ offset: $event })"
+    />
+  </main>
 </template>
