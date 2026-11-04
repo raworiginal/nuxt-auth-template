@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import AdminUsersDialogs from "./AdminUsersDialogs.vue";
+import AdminUsersDialogsContainer from "./AdminUsersDialogsContainer.vue";
 import type { AdminUser } from "~/types/admin";
 import { ADMIN_USERS_PAGE_SIZE_OPTIONS } from "~/utils/constants/admin";
 
 const { options, updateOptions, handleSearch } = useAdminUsersQuery();
 
 const { users, total, loading, error, refresh } = await useAdminUsers(options);
-const dialogs = ref<InstanceType<typeof AdminUsersDialogs> | null>(null);
+const dialogs = ref<InstanceType<typeof AdminUsersDialogsContainer> | null>(null);
 
 function openDialog(
   action: Parameters<NonNullable<typeof dialogs.value>["open"]>[0],
@@ -17,7 +17,7 @@ function openDialog(
 </script>
 
 <template>
-  <AdminUsersDialogs ref="dialogs" @refresh="refresh" />
+  <AdminUsersDialogsContainer ref="dialogs" @refresh="refresh" />
 
   <main>
     <h1>Users</h1>
