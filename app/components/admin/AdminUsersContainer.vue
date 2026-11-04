@@ -1,59 +1,12 @@
 <script setup lang="ts">
 import AdminUsersDialogs from "./AdminUsersDialogs.vue";
-import {
-  ADMIN_USERS_PAGE_SIZE_OPTIONS,
-  DEFAULT_ADMIN_USERS_PAGE_SIZE,
-} from "~/utils/constants/admin";
-import type { ListUsersOptions, ListUsersSearchOptions } from "~/types/admin";
 import type { AdminUser } from "~/types/admin";
+import { ADMIN_USERS_PAGE_SIZE_OPTIONS } from "~/utils/constants/admin";
 
-const route = useRoute();
-const router = useRouter();
-
-function parseQueryNumber(value: unknown, fallback: number) {
-  const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
-}
-
-const options = computed<ListUsersOptions>(() => ({
-  limit: parseQueryNumber(route.query.limit, DEFAULT_ADMIN_USERS_PAGE_SIZE),
-  offset: parseQueryNumber(route.query.offset, 0),
-  searchValue:
-    typeof route.query.searchValue === "string"
-      ? route.query.searchValue
-      : undefined,
-  searchField:
-    route.query.searchField === "email" || route.query.searchField === "name"
-      ? route.query.searchField
-      : "name",
-  searchOperator: "contains",
-}));
+const { options, updateOptions, handleSearch } = useAdminUsersQuery();
 
 const { users, total, loading, error, refresh } = await useAdminUsers(options);
 const dialogs = ref<InstanceType<typeof AdminUsersDialogs> | null>(null);
-
-async function updateOptions(next: Partial<ListUsersOptions>) {
-  const query = { ...route.query };
-
-  for (const [key, value] of Object.entries(next)) {
-    if (value === undefined || value === "") {
-      delete query[key];
-    } else {
-      query[key] = String(value);
-    }
-  }
-
-  await router.replace({
-    query,
-  });
-}
-
-async function handleSearch(search: ListUsersSearchOptions) {
-  await updateOptions({
-    ...search,
-    offset: 0,
-  });
-}
 
 function openDialog(
   action: Parameters<NonNullable<typeof dialogs.value>["open"]>[0],
@@ -69,12 +22,12 @@ function openDialog(
   <main>
     <h1>Users</h1>
 
-    <AdminUsersSearch
+    <AdminUsersToolbar
       :search-value="options.searchValue ?? ''"
       :search-field="options.searchField ?? 'name'"
       @search="handleSearch"
+      @created="refresh"
     />
-    <AdminCreateUserContainer @created="refresh" />
 
     <AdminUsersList
       :users="users"
