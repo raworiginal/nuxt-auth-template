@@ -3,6 +3,7 @@ const { user } = defineProps<{
   user: {
     name: string;
     image?: string | null;
+    role?: string | null;
   } | null;
 }>();
 </script>
@@ -29,11 +30,14 @@ const { user } = defineProps<{
       tabindex="-1"
       class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
     >
-       <li v-if="user">Hello, {{ user.name }}</li>
+      <li v-if="user">Hello, {{ user.name }}</li>
       <li>
         <NuxtLink to="/app/profile" class="justify-between"> Profile </NuxtLink>
       </li>
-       <li><LogoutContainer /></li>
+      <li v-if="user?.role === 'admin'">
+        <NuxtLink to="/admin" class="justify-between">Admin Panel</NuxtLink>
+      </li>
+      <li><LogoutContainer /></li>
     </ul>
   </div>
 </template>

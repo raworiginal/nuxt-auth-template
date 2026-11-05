@@ -32,7 +32,10 @@ const { loggedIn, user } = useUserSession();
       </div>
 
       <div class="navbar-center hidden lg:flex">
-        <NavMenu :logged-in="loggedIn" menuClasses="menu menu-horizontal px-1" />
+        <NavMenu
+          :logged-in="loggedIn"
+          menuClasses="menu menu-horizontal px-1"
+        />
       </div>
 
       <div class="navbar-end">
