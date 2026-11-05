@@ -28,7 +28,10 @@ const emit = defineEmits<{
     Loading users...
   </p>
   <p v-else-if="error" class="py-4 text-error" role="alert">{{ error }}</p>
-  <p v-else-if="users.length === 0" class="py-8 text-center text-base-content/70">
+  <p
+    v-else-if="users.length === 0"
+    class="py-8 text-center text-base-content/70"
+  >
     No users found.
   </p>
   <template v-else>
@@ -58,19 +61,19 @@ const emit = defineEmits<{
             <dd class="mt-1">
               <span
                 class="badge"
-                :class="user.banned ? 'badge-error' : 'badge-success badge-outline'"
+                :class="
+                  user.banned ? 'badge-error' : 'badge-success badge-outline'
+                "
               >
                 {{ user.banned ? "Banned" : "Active" }}
               </span>
             </dd>
           </div>
-          <div v-if="user.banned && user.banReason" class="col-span-2">
-            <dt class="font-medium text-base-content/70">Ban reason</dt>
-            <dd class="mt-1 break-words">{{ user.banReason }}</dd>
-          </div>
-          <div v-if="user.banned && user.banExpires" class="col-span-2">
-            <dt class="font-medium text-base-content/70">Ban expires</dt>
-            <dd class="mt-1">{{ new Date(user.banExpires).toLocaleString() }}</dd>
+          <div
+            v-if="user.banned && (user.banReason || user.banExpires)"
+            class="col-span-2"
+          >
+            <AdminUserBanDetails :user="user" />
           </div>
         </dl>
         <div class="mt-4 border-t border-base-300 pt-3">
@@ -87,14 +90,16 @@ const emit = defineEmits<{
       </li>
     </ul>
 
-    <div class="hidden overflow-x-auto rounded-box border border-base-300 md:block">
+    <div
+      class="hidden overflow-x-auto rounded-box border border-base-300 md:block"
+    >
       <table class="table table-zebra">
         <thead>
           <tr>
             <th>Name</th>
             <th>Email</th>
-            <th>Role</th>
-            <th>Status</th>
+            <th class="min-w-28">Role</th>
+            <th class="min-w-36">Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -102,20 +107,17 @@ const emit = defineEmits<{
           <tr v-for="user in users" :key="user.id" class="align-top">
             <td class="max-w-56 break-words">{{ user.name }}</td>
             <td class="max-w-64 break-all">{{ user.email }}</td>
-            <td>{{ user.role ?? "user" }}</td>
-            <td>
+            <td class="min-w-28">{{ user.role ?? "user" }}</td>
+            <td class="min-w-36">
               <span
                 class="badge"
-                :class="user.banned ? 'badge-error' : 'badge-success badge-outline'"
+                :class="
+                  user.banned ? 'badge-error' : 'badge-success badge-outline'
+                "
               >
                 {{ user.banned ? "Banned" : "Active" }}
               </span>
-              <span v-if="user.banned && user.banReason" class="block text-sm">
-                {{ user.banReason }}
-              </span>
-              <span v-if="user.banned && user.banExpires" class="block text-sm">
-                Expires: {{ new Date(user.banExpires).toLocaleString() }}
-              </span>
+              <AdminUserBanDetails :user="user" />
             </td>
             <td class="min-w-48">
               <AdminUserActions
@@ -144,7 +146,12 @@ const emit = defineEmits<{
         id="admin-user-page-size"
         class="select select-bordered select-sm"
         :value="limit"
-        @change="emit('pageSizeChange', Number(($event.target as HTMLSelectElement).value))"
+        @change="
+          emit(
+            'pageSizeChange',
+            Number(($event.target as HTMLSelectElement).value),
+          )
+        "
       >
         <option v-for="size in pageSizeOptions" :key="size" :value="size">
           {{ size }}
