@@ -1,0 +1,39 @@
+{
+  "name": "@raworiginal/nuxt-auth-layer",
+  "version": "0.1.0",
+  "description": "Reusable Nuxt authentication and user administration layer",
+  "type": "module",
+  "main": "./nuxt.config.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/raworiginal/nuxt-auth-template.git",
+    "directory": "packages/nuxt-auth-layer"
+  },
+  "files": [
+    "app",
+    "server",
+    "nuxt.config.ts",
+    "drizzle.config.ts",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "nuxt": ">=4.5.2 <5",
+    "vue": ">=3.5.0 <4"
+  },
+  "dependencies": {
+    "@nuxtjs/better-auth": "^0.3.14",
+    "@tailwindcss/vite": "^4.3.3",
+    "better-auth": "^1.7.6",
+    "daisyui": "^5.7.47",
+    "dotenv": "^18.0.4",
+    "drizzle-orm": "1.0.0-rc.4",
+    "h3": "^2.0.8",
+    "postgres": "^3.4.9",
+    "tailwindcss": "^4.3.3",
+    "zod": "^4.6.7"
+  }
+}
