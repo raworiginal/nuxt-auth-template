@@ -21,6 +21,22 @@ const emit = defineEmits<{
   pageChange: [offset: number];
   pageSizeChange: [limit: number];
 }>();
+
+const providerLabels: Record<string, string> = {
+  credential: "Email / password",
+  github: "GitHub",
+  google: "Google",
+};
+
+function formatProvider(provider: string) {
+  return (
+    providerLabels[provider] ??
+    provider
+      .split(/[-_]/)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ")
+  );
+}
 </script>
 
 <template>
@@ -69,6 +85,21 @@ const emit = defineEmits<{
               </span>
             </dd>
           </div>
+          <div class="col-span-2">
+            <dt class="font-medium text-base-content/70">Sign-in providers</dt>
+            <dd class="mt-1 flex flex-wrap gap-1">
+              <span
+                v-for="provider in user.providers ?? []"
+                :key="provider"
+                class="badge badge-outline"
+              >
+                {{ formatProvider(provider) }}
+              </span>
+              <span v-if="!user.providers?.length" class="text-base-content/70">
+                None
+              </span>
+            </dd>
+          </div>
           <div
             v-if="user.banned && (user.banReason || user.banExpires)"
             class="col-span-2"
@@ -98,6 +129,7 @@ const emit = defineEmits<{
           <tr>
             <th>Name</th>
             <th>Email</th>
+            <th>Sign-in providers</th>
             <th class="min-w-28">Role</th>
             <th class="min-w-36">Status</th>
             <th>Actions</th>
@@ -107,6 +139,20 @@ const emit = defineEmits<{
           <tr v-for="user in users" :key="user.id" class="align-top">
             <td class="max-w-56 break-words">{{ user.name }}</td>
             <td class="max-w-64 break-all">{{ user.email }}</td>
+            <td class="min-w-40">
+              <div class="flex flex-wrap gap-1">
+                <span
+                  v-for="provider in user.providers ?? []"
+                  :key="provider"
+                  class="badge badge-outline"
+                >
+                  {{ formatProvider(provider) }}
+                </span>
+                <span v-if="!user.providers?.length" class="text-base-content/70">
+                  None
+                </span>
+              </div>
+            </td>
             <td class="min-w-28">{{ user.role ?? "user" }}</td>
             <td class="min-w-36">
               <span

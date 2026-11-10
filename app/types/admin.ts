@@ -3,6 +3,7 @@ import {
   createAdminUserSchema,
   editAdminUserSchema,
   listUsersOptionsSchema,
+  listAdminUserProvidersResultSchema,
   resetAdminUserPasswordSchema,
   banAdminUserSchema,
   unbanAdminUserSchema,
@@ -25,6 +26,7 @@ export type AdminUser = {
   banned?: boolean | null;
   banReason?: string | null;
   banExpires?: string | Date | null;
+  providers?: string[];
 };
 
 export type ListUsersSearchOptions = {
@@ -41,6 +43,9 @@ export type ListUsersResult = {
 };
 
 export type ListUsersOptions = z.infer<typeof listUsersOptionsSchema>;
+export type ListAdminUserProvidersResult = z.infer<
+  typeof listAdminUserProvidersResultSchema
+>;
 
 export type CreateAdminUserFormData = z.input<typeof createAdminUserSchema>;
 export type CreateAdminUserInput = z.output<typeof createAdminUserSchema>;

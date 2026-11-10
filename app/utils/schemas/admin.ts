@@ -74,6 +74,14 @@ export const listUsersOptionsSchema = z.object({
     .optional(),
 });
 
+export const listAdminUserProvidersSchema = z.object({
+  userIds: z.array(z.string().trim().min(1, "User is required")).min(1).max(50),
+});
+
+export const listAdminUserProvidersResultSchema = z.object({
+  providersByUserId: z.record(z.string(), z.array(z.string())),
+});
+
 export const listAdminUserSessionsSchema = z.object({
   userId: z.string().trim().min(1, "User is required"),
 });
