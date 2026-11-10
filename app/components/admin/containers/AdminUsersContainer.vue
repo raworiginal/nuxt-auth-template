@@ -19,8 +19,8 @@ function openDialog(
 <template>
   <AdminUsersDialogsContainer ref="dialogs" @refresh="refresh" />
 
-  <main>
-    <h1>Users</h1>
+  <main class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Users</h1>
 
     <AdminUsersToolbarContainer
       :search-value="options.searchValue ?? ''"

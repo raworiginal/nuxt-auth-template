@@ -1,12 +1,15 @@
-import type { ListUsersResult } from "~/types/admin";
-import type { ListUsersOptions } from "~/types/admin";
+import type {
+  ListAdminUserProvidersResult,
+  ListUsersOptions,
+  ListUsersResult,
+} from "~/types/admin";
 
 export async function useAdminUsers(
   options: ComputedRef<ListUsersOptions>,
 ) {
   const { data, pending, error, refresh } = await useAuthAsyncData(
     "admin-users",
-    (requestFetch) => {
+    async (requestFetch) => {
       const params = new URLSearchParams();
       const {
         limit,
@@ -22,9 +25,27 @@ export async function useAdminUsers(
       if (searchField) params.set("searchField", searchField);
       if (searchOperator) params.set("searchOperator", searchOperator);
 
-      return requestFetch<ListUsersResult>(
+      const result = await requestFetch<ListUsersResult>(
         `/api/auth/admin/list-users?${params.toString()}`,
       );
+      if (result.users.length === 0) return result;
+
+      const { providersByUserId } =
+        await requestFetch<ListAdminUserProvidersResult>(
+          "/api/admin/user-providers",
+          {
+            method: "POST",
+            body: { userIds: result.users.map((user) => user.id) },
+          },
+        );
+
+      return {
+        ...result,
+        users: result.users.map((user) => ({
+          ...user,
+          providers: providersByUserId[user.id] ?? [],
+        })),
+      };
     },
     { watch: [options] },
   );

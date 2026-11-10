@@ -1,5 +1,6 @@
 import {
   DEFAULT_ADMIN_USERS_PAGE_SIZE,
+  MAX_ADMIN_USERS_PAGE_SIZE,
 } from "~/utils/constants/admin";
 import type {
   ListUsersOptions,
@@ -16,7 +17,10 @@ export function useAdminUsersQuery() {
   const router = useRouter();
 
   const options = computed<ListUsersOptions>(() => ({
-    limit: parseQueryNumber(route.query.limit, DEFAULT_ADMIN_USERS_PAGE_SIZE),
+    limit: Math.min(
+      parseQueryNumber(route.query.limit, DEFAULT_ADMIN_USERS_PAGE_SIZE),
+      MAX_ADMIN_USERS_PAGE_SIZE,
+    ),
     offset: parseQueryNumber(route.query.offset, 0),
     searchValue:
       typeof route.query.searchValue === "string"
