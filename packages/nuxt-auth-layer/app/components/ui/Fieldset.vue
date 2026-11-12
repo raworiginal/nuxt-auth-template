@@ -6,11 +6,12 @@ defineProps<{
 </script>
 
 <template>
-  <fieldset
-    :disabled="disabled"
-    class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4"
-  >
-    <legend class="fieldset-legend">{{ title }}</legend>
-    <slot />
-  </fieldset>
+  <UCard>
+    <template #header>
+      <h2 class="font-semibold">{{ title }}</h2>
+    </template>
+    <fieldset :disabled="disabled" class="space-y-4">
+      <slot />
+    </fieldset>
+  </UCard>
 </template>

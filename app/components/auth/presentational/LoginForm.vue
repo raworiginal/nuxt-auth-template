@@ -45,22 +45,17 @@ function getProviderLabel(provider: SocialProvider) {
       <p v-if="authError" class="text-error mt-2" role="alert">
         {{ authError }}
       </p>
-      <label class="label">Email</label>
-      <input
-        v-model="form.email"
-        type="email"
-        class="input"
-        placeholder="Email"
-        required
-      />
-      <p
-        v-if="fieldErrors.email"
-        id="email-error"
-        class="text-error text-sm"
-        role="alert"
-      >
-        {{ fieldErrors.email }}
-      </p>
+      <UFormField label="Email" name="email" :error="fieldErrors.email">
+        <UInput
+          v-model="form.email"
+          name="email"
+          type="email"
+          placeholder="Email"
+          autocomplete="email"
+          required
+          class="w-full"
+        />
+      </UFormField>
 
       <PasswordField
         v-model:password="form.password"
@@ -68,23 +63,29 @@ function getProviderLabel(provider: SocialProvider) {
         autocomplete="current-password"
       />
 
-      <button class="btn btn-primary mt-4">Login</button>
+      <UButton class="mt-4" type="submit">Login</UButton>
 
       <template v-if="socialProviders.length > 0">
-        <div class="divider">or continue with</div>
+        <div class="flex items-center gap-3 text-sm text-muted">
+          <span class="flex-1 border-t border-default"></span>
+          <span>or continue with</span>
+          <span class="flex-1 border-t border-default"></span>
+        </div>
         <p v-if="socialError" class="text-error text-sm" role="alert">
           {{ socialError }}
         </p>
-        <button
+        <UButton
           v-for="provider in socialProviders"
           :key="provider"
           type="button"
-          class="btn btn-outline mt-2"
+          class="mt-2"
+          color="neutral"
+          variant="outline"
           :disabled="loading || socialLoading"
           @click="emit('socialSignIn', provider)"
         >
           {{ socialLoading ? "Connecting…" : `Continue with ${getProviderLabel(provider)}` }}
-        </button>
+        </UButton>
       </template>
     </Fieldset>
   </form>

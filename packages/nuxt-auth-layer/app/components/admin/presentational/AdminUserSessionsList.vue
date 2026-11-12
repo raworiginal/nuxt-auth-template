@@ -31,7 +31,7 @@ function formatDate(value: string) {
 
 <template>
   <div aria-live="polite">
-    <p class="text-sm text-base-content/70">User ID: {{ userId }}</p>
+    <p class="text-sm text-muted">User ID: {{ userId }}</p>
     <p v-if="loading" class="mt-4" role="status">Loading active sessions...</p>
     <p
       v-else-if="fieldErrors.userId || fieldErrors.sessionId"
@@ -62,30 +62,32 @@ function formatDate(value: string) {
       </p>
       <h3 class="mt-4 font-semibold">Active sessions</h3>
       <div class="mt-3">
-        <button
+        <UButton
           v-if="!confirmingAll"
-          class="btn btn-error btn-sm"
+          color="error"
+          variant="soft"
+          size="sm"
           type="button"
           :disabled="actionLoading"
           @click="emit('confirmAll')"
         >
           Revoke all sessions
-        </button>
+        </UButton>
         <div v-else class="rounded border border-error p-3" role="alertdialog" aria-label="Confirm revoke all sessions">
           <p>Revoke all sessions for this user?</p>
-          <button class="btn btn-error btn-sm mt-2" type="button" :disabled="actionLoading" @click="emit('revokeAll')">
+          <UButton color="error" variant="soft" size="sm" class="mt-2" type="button" :loading="actionLoading" @click="emit('revokeAll')">
             {{ actionLoading ? "Revoking..." : "Yes, revoke all" }}
-          </button>
-          <button class="btn btn-sm ml-2 mt-2" type="button" :disabled="actionLoading" @click="emit('cancelAll')">
+          </UButton>
+          <UButton color="neutral" variant="outline" size="sm" class="ml-2 mt-2" type="button" :disabled="actionLoading" @click="emit('cancelAll')">
             Cancel
-          </button>
+          </UButton>
         </div>
       </div>
       <ul class="mt-2 space-y-3" aria-label="Active sessions">
         <li
           v-for="session in sessions"
           :key="session.id"
-          class="rounded border border-base-300 p-3"
+          class="rounded-md border border-default p-3"
         >
           <dl class="text-sm">
             <div>
@@ -98,23 +100,25 @@ function formatDate(value: string) {
             </div>
           </dl>
           <div class="mt-3">
-            <button
+            <UButton
               v-if="confirmingSessionId !== session.id"
-              class="btn btn-error btn-sm"
+              color="error"
+              variant="soft"
+              size="sm"
               type="button"
               :disabled="actionLoading"
               @click="emit('confirmSession', session.id)"
             >
               Revoke
-            </button>
+            </UButton>
             <div v-else class="rounded border border-error p-3" role="alertdialog" aria-label="Confirm revoke session">
               <p>Revoke this session?</p>
-              <button class="btn btn-error btn-sm mt-2" type="button" :disabled="actionLoading" @click="emit('revokeSession', session.id)">
+              <UButton color="error" variant="soft" size="sm" class="mt-2" type="button" :loading="actionLoading" @click="emit('revokeSession', session.id)">
                 {{ actionLoading ? "Revoking..." : "Yes, revoke" }}
-              </button>
-              <button class="btn btn-sm ml-2 mt-2" type="button" :disabled="actionLoading" @click="emit('cancelSession')">
+              </UButton>
+              <UButton color="neutral" variant="outline" size="sm" class="ml-2 mt-2" type="button" :disabled="actionLoading" @click="emit('cancelSession')">
                 Cancel
-              </button>
+              </UButton>
             </div>
           </div>
         </li>

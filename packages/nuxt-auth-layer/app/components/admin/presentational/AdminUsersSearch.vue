@@ -41,25 +41,24 @@ function submitSearch() {
     class="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:items-center"
     @submit.prevent="submitSearch"
   >
-    <label class="sr-only" for="admin-user-search">Search users</label>
-    <input
+    <UInput
       id="admin-user-search"
       v-model="searchValue"
-      class="input input-bordered w-full min-w-0 sm:flex-1"
+      class="w-full min-w-0 sm:flex-1"
       type="search"
       placeholder="Search users"
+      aria-label="Search users"
     />
-    <label class="sr-only" for="admin-user-search-field">
-      Search field
-    </label>
-    <select
+    <USelect
       id="admin-user-search-field"
       v-model="searchField"
-      class="select select-bordered w-full sm:w-auto"
-    >
-      <option value="name">Name</option>
-      <option value="email">Email</option>
-    </select>
-    <button class="btn btn-primary w-full sm:w-auto" type="submit">Search</button>
+      class="w-full sm:w-auto"
+      :items="[
+        { label: 'Name', value: 'name' },
+        { label: 'Email', value: 'email' },
+      ]"
+      aria-label="Search field"
+    />
+    <UButton class="w-full sm:w-auto" type="submit">Search</UButton>
   </form>
 </template>

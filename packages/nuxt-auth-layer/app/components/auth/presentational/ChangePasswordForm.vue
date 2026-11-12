@@ -61,10 +61,9 @@ function handleSubmit() {
         name="confirmPassword"
       />
 
-      <button class="btn btn-primary mt-4" type="submit" :disabled="loading">
-        <span v-if="loading" class="loading loading-spinner" />
+      <UButton class="mt-4" type="submit" :loading="loading">
         {{ loading ? "Changing..." : "Change password" }}
-      </button>
+      </UButton>
     </Fieldset>
   </form>
 </template>

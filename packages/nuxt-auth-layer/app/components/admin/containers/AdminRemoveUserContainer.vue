@@ -50,15 +50,15 @@ async function handleConfirm() {
         {{ successMessage }}
       </p>
 
-      <button
-        class="btn btn-error mt-4"
+      <UButton
+        class="mt-4"
+        color="error"
         type="button"
-        :disabled="loading"
+        :loading="loading"
         @click="handleConfirm"
       >
-        <span v-if="loading" class="loading loading-spinner" />
         {{ loading ? "Removing..." : "Remove user" }}
-      </button>
+      </UButton>
     </div>
   </AppModal>
 </template>

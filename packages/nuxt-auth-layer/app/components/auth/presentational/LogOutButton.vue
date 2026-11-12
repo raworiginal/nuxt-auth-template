@@ -9,5 +9,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <button :disabled="loading" @click="emit('click')">Logout</button>
+  <UButton color="neutral" variant="ghost" :disabled="loading" @click="emit('click')">
+    Logout
+  </UButton>
 </template>
