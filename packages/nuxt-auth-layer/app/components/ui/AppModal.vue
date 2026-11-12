@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from "vue";
+
 const open = defineModel<boolean>("open", { required: true });
 
 const props = withDefaults(
@@ -11,41 +13,23 @@ const props = withDefaults(
   },
 );
 
-function close() {
-  if (props.closeDisabled) return;
-  open.value = false;
-}
+const modalOpen = computed({
+  get: () => open.value,
+  set: (value: boolean) => {
+    if (value || !props.closeDisabled) open.value = value;
+  },
+});
 </script>
 
 <template>
-  <dialog
-    v-if="open"
-    open
-    class="modal"
-    role="dialog"
-    aria-modal="true"
-    :aria-label="props.title"
-    tabindex="-1"
-    @click.self="close"
-    @keydown.esc.prevent="close"
+  <UModal
+    v-model:open="modalOpen"
+    :title="props.title"
+    :close="!props.closeDisabled"
+    :dismissible="!props.closeDisabled"
   >
-    <div class="modal-box">
-      <div class="flex items-center justify-between gap-4">
-        <h2 class="text-lg font-bold">{{ props.title }}</h2>
-        <button
-          class="btn btn-sm btn-circle btn-ghost"
-          type="button"
-          aria-label="Close dialog"
-          :disabled="props.closeDisabled"
-          @click="close"
-        >
-          ×
-        </button>
-      </div>
-
-      <div class="mt-4">
-        <slot />
-      </div>
-    </div>
-  </dialog>
+    <template #body>
+      <slot />
+    </template>
+  </UModal>
 </template>

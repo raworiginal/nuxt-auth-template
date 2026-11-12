@@ -33,60 +33,51 @@ function handleSubmit() {
         {{ props.successMessage }}
       </p>
 
-      <label class="label mt-2" for="admin-ban-user-reason">Reason</label>
-      <textarea
-        id="admin-ban-user-reason"
-        v-model="form.banReason"
-        class="textarea w-full"
+      <UFormField
+        label="Reason"
         name="banReason"
-        rows="3"
-        :aria-invalid="Boolean(props.fieldErrors.banReason)"
-        aria-describedby="admin-ban-user-reason-error"
-      />
-      <p
-        v-if="props.fieldErrors.banReason"
-        id="admin-ban-user-reason-error"
-        class="text-error text-sm"
-        role="alert"
+        :error="props.fieldErrors.banReason"
       >
-        {{ props.fieldErrors.banReason }}
-      </p>
-
-      <label class="label mt-2" for="admin-ban-user-duration">
-        Duration (leave blank for permanent)
-      </label>
-      <div class="flex gap-2">
-        <input
-          id="admin-ban-user-duration"
-          v-model.number="form.duration"
-          class="input w-full"
-          name="duration"
-          type="number"
-          min="0"
-          step="any"
-          :aria-invalid="Boolean(props.fieldErrors.duration)"
-          aria-describedby="admin-ban-user-duration-error"
+        <UTextarea
+          id="admin-ban-user-reason"
+          v-model="form.banReason"
+          name="banReason"
+          :rows="3"
+          class="w-full"
         />
-        <select v-model="form.durationUnit" class="select" name="durationUnit">
-          <option value="seconds">Seconds</option>
-          <option value="minutes">Minutes</option>
-          <option value="hours">Hours</option>
-          <option value="days">Days</option>
-        </select>
-      </div>
-      <p
-        v-if="props.fieldErrors.duration"
-        id="admin-ban-user-duration-error"
-        class="text-error text-sm"
-        role="alert"
-      >
-        {{ props.fieldErrors.duration }}
-      </p>
+      </UFormField>
 
-      <button class="btn btn-primary mt-4" type="submit" :disabled="props.loading">
-        <span v-if="props.loading" class="loading loading-spinner" />
+      <UFormField
+        label="Duration (leave blank for permanent)"
+        name="duration"
+        :error="props.fieldErrors.duration"
+      >
+        <div class="flex gap-2">
+          <UInput
+            id="admin-ban-user-duration"
+            v-model.number="form.duration"
+            class="w-full"
+            name="duration"
+            type="number"
+            min="0"
+            step="any"
+          />
+          <USelect
+            v-model="form.durationUnit"
+            name="durationUnit"
+            :items="[
+              { label: 'Seconds', value: 'seconds' },
+              { label: 'Minutes', value: 'minutes' },
+              { label: 'Hours', value: 'hours' },
+              { label: 'Days', value: 'days' },
+            ]"
+          />
+        </div>
+      </UFormField>
+
+      <UButton class="mt-4" type="submit" :loading="props.loading">
         {{ props.loading ? "Banning..." : "Ban user" }}
-      </button>
+      </UButton>
     </Fieldset>
   </form>
 </template>

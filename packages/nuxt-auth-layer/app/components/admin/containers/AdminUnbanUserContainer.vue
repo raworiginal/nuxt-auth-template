@@ -50,15 +50,14 @@ function handleConfirm() {
       <p v-if="successMessage" class="text-success mt-2" role="status">
         {{ successMessage }}
       </p>
-      <button
-        class="btn btn-primary mt-4"
+      <UButton
+        class="mt-4"
         type="button"
-        :disabled="loading"
+        :loading="loading"
         @click="handleConfirm"
       >
-        <span v-if="loading" class="loading loading-spinner" />
         {{ loading ? "Unbanning..." : "Unban user" }}
-      </button>
+      </UButton>
     </div>
   </AppModal>
 </template>

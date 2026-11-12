@@ -11,7 +11,7 @@ export default defineNuxtConfig({
   },
   srcDir: join(layerRoot, "app"),
   serverDir: join(layerRoot, "server"),
-  modules: ["@nuxtjs/better-auth"],
+  modules: ["@nuxtjs/better-auth", "@nuxt/ui"],
   auth: {
     redirects: {
       login: "/login",

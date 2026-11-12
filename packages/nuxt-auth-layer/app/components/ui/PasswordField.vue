@@ -23,24 +23,15 @@ const props = withDefaults(
 </script>
 
 <template>
-  <label class="label mt-2" :for="props.id">{{ props.label }}</label>
-  <input
-    :id="props.id"
-    v-model="password"
-    :name="props.name"
-    type="password"
-    class="input"
-    :placeholder="props.placeholder"
-    :autocomplete="props.autocomplete"
-    :aria-invalid="Boolean(props.error)"
-    :aria-describedby="`${props.id}-error`"
-  />
-  <p
-    v-if="props.error"
-    :id="`${props.id}-error`"
-    class="text-error text-sm"
-    role="alert"
-  >
-    {{ props.error }}
-  </p>
+  <UFormField :label="props.label" :name="props.name" :error="props.error">
+    <UInput
+      :id="props.id"
+      v-model="password"
+      :name="props.name"
+      type="password"
+      :placeholder="props.placeholder"
+      :autocomplete="props.autocomplete"
+      class="w-full"
+    />
+  </UFormField>
 </template>

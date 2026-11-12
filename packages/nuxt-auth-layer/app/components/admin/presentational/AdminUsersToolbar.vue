@@ -20,12 +20,12 @@ const emit = defineEmits<{
       :search-field="searchField"
       @search="emit('search', $event)"
     />
-    <button
-      class="btn btn-primary w-full sm:w-auto"
+    <UButton
+      class="w-full sm:w-auto"
       type="button"
       @click="emit('create')"
     >
       Create user
-    </button>
+    </UButton>
   </div>
 </template>

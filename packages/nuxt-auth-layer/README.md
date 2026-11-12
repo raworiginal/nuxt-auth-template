@@ -1,6 +1,6 @@
 # @raworiginal/nuxt-auth-layer
 
-A reusable Nuxt 4 layer providing the authentication and user-administration UI, server endpoints, Better Auth setup, and PostgreSQL/Drizzle schema used by this template.
+A reusable Nuxt 4 layer providing authentication logic, user-administration UI, server endpoints, Better Auth setup, and the PostgreSQL/Drizzle schema used by this template. It does not provide login or registration pages or site navigation.
 
 ## Install
 
@@ -18,7 +18,7 @@ export default defineNuxtConfig({
 });
 ```
 
-Your project takes precedence over the layer, so you can replace its pages, components, and configuration by adding files at the same paths in your app.
+Your project takes precedence over the layer, so you can replace its pages, components, and configuration by adding files at the same paths in your app. The repository root contains the integration demo's example home, login, and registration pages, forms, and navigation; these examples are not included in the published layer. The layer keeps the auth composables and expects consuming apps to provide their own `/login` page for the configured redirects.
 
 ## Configuration
 
@@ -48,7 +48,7 @@ In this repository, `pnpm db:migrate` runs the same config from the workspace so
 
 ## Included functionality
 
-- Registration, email/password and optional social login, logout, profile, and password management
+- Registration, email/password and optional social login, and logout logic via composables; profile and password-management UI
 - Account and session management
 - Admin user search, editing, bans, session revocation, and removal
 - Auth-protected `/app/**` and `/admin/**` routes

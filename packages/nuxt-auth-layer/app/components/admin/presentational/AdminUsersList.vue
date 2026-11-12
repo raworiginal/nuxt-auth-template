@@ -28,6 +28,19 @@ const providerLabels: Record<string, string> = {
   google: "Google",
 };
 
+const columns = [
+  { accessorKey: "name", header: "Name" },
+  { accessorKey: "email", header: "Email" },
+  { accessorKey: "providers", header: "Sign-in providers" },
+  { accessorKey: "role", header: "Role" },
+  { accessorKey: "banned", header: "Status" },
+  { id: "actions", header: "Actions" },
+];
+
+const pageSizeItems = computed(() =>
+  props.pageSizeOptions.map((size) => ({ label: String(size), value: size })),
+);
+
 function formatProvider(provider: string) {
   return (
     providerLabels[provider] ??
@@ -40,76 +53,116 @@ function formatProvider(provider: string) {
 </script>
 
 <template>
-  <p v-if="loading" class="py-8 text-center text-base-content/70" role="status">
+  <p v-if="loading" class="py-8 text-center text-muted" role="status">
     Loading users...
   </p>
   <p v-else-if="error" class="py-4 text-error" role="alert">{{ error }}</p>
   <p
     v-else-if="users.length === 0"
-    class="py-8 text-center text-base-content/70"
+    class="py-8 text-center text-muted"
   >
     No users found.
   </p>
   <template v-else>
-    <p class="mb-3 text-sm text-base-content/70" aria-live="polite">
+    <p class="mb-3 text-sm text-muted" aria-live="polite">
       {{ total }} users found.
     </p>
 
     <ul class="space-y-3 md:hidden" aria-label="Users">
-      <li
-        v-for="user in users"
-        :key="user.id"
-        class="rounded-box border border-base-300 bg-base-100 p-4 shadow-sm"
-      >
-        <div class="min-w-0">
-          <h2 class="break-words font-semibold">{{ user.name }}</h2>
-          <p class="mt-1 break-all text-sm text-base-content/70">
-            {{ user.email }}
-          </p>
-        </div>
-        <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-          <div>
-            <dt class="font-medium text-base-content/70">Role</dt>
-            <dd class="mt-1 break-words">{{ user.role ?? "user" }}</dd>
+      <li v-for="user in users" :key="user.id">
+        <UCard>
+          <div class="min-w-0">
+            <h2 class="break-words font-semibold">{{ user.name }}</h2>
+            <p class="mt-1 break-all text-sm text-muted">{{ user.email }}</p>
           </div>
-          <div>
-            <dt class="font-medium text-base-content/70">Status</dt>
-            <dd class="mt-1">
-              <span
-                class="badge"
-                :class="
-                  user.banned ? 'badge-error' : 'badge-success badge-outline'
-                "
-              >
-                {{ user.banned ? "Banned" : "Active" }}
-              </span>
-            </dd>
+          <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+            <div>
+              <dt class="font-medium text-muted">Role</dt>
+              <dd class="mt-1 break-words">{{ user.role ?? "user" }}</dd>
+            </div>
+            <div>
+              <dt class="font-medium text-muted">Status</dt>
+              <dd class="mt-1">
+                <UBadge :color="user.banned ? 'error' : 'success'">
+                  {{ user.banned ? "Banned" : "Active" }}
+                </UBadge>
+              </dd>
+            </div>
+            <div class="col-span-2">
+              <dt class="font-medium text-muted">Sign-in providers</dt>
+              <dd class="mt-1 flex flex-wrap gap-1">
+                <UBadge
+                  v-for="provider in user.providers ?? []"
+                  :key="provider"
+                  color="neutral"
+                  variant="outline"
+                >
+                  {{ formatProvider(provider) }}
+                </UBadge>
+                <span v-if="!user.providers?.length" class="text-muted">
+                  None
+                </span>
+              </dd>
+            </div>
+            <div
+              v-if="user.banned && (user.banReason || user.banExpires)"
+              class="col-span-2"
+            >
+              <AdminUserBanDetails :user="user" />
+            </div>
+          </dl>
+          <div class="mt-4 border-t border-default pt-3">
+            <AdminUserActions
+              :user="user"
+              @edit="emit('edit', $event)"
+              @reset-password="emit('resetPassword', $event)"
+              @ban="emit('ban', $event)"
+              @unban="emit('unban', $event)"
+              @remove="emit('remove', $event)"
+              @view-sessions="emit('viewSessions', $event)"
+            />
           </div>
-          <div class="col-span-2">
-            <dt class="font-medium text-base-content/70">Sign-in providers</dt>
-            <dd class="mt-1 flex flex-wrap gap-1">
-              <span
-                v-for="provider in user.providers ?? []"
-                :key="provider"
-                class="badge badge-outline"
-              >
-                {{ formatProvider(provider) }}
-              </span>
-              <span v-if="!user.providers?.length" class="text-base-content/70">
-                None
-              </span>
-            </dd>
+        </UCard>
+      </li>
+    </ul>
+
+    <div class="hidden overflow-x-auto md:block">
+      <UTable :data="users" :columns="columns" class="min-w-[48rem]">
+        <template #name-cell="{ row }">
+          <span class="max-w-56 break-words">{{ row.original.name }}</span>
+        </template>
+        <template #email-cell="{ row }">
+          <span class="max-w-64 break-all">{{ row.original.email }}</span>
+        </template>
+        <template #providers-cell="{ row }">
+          <div class="flex min-w-40 flex-wrap gap-1">
+            <UBadge
+              v-for="provider in row.original.providers ?? []"
+              :key="provider"
+              color="neutral"
+              variant="outline"
+            >
+              {{ formatProvider(provider) }}
+            </UBadge>
+            <span v-if="!row.original.providers?.length" class="text-muted">
+              None
+            </span>
           </div>
-          <div
-            v-if="user.banned && (user.banReason || user.banExpires)"
-            class="col-span-2"
-          >
-            <AdminUserBanDetails :user="user" />
+        </template>
+        <template #role-cell="{ row }">
+          {{ row.original.role ?? "user" }}
+        </template>
+        <template #banned-cell="{ row }">
+          <div class="min-w-36">
+            <UBadge :color="row.original.banned ? 'error' : 'success'">
+              {{ row.original.banned ? "Banned" : "Active" }}
+            </UBadge>
+            <AdminUserBanDetails :user="row.original" />
           </div>
-        </dl>
-        <div class="mt-4 border-t border-base-300 pt-3">
+        </template>
+        <template #actions-cell="{ row }">
           <AdminUserActions
-            :user="user"
+            :user="row.original"
             @edit="emit('edit', $event)"
             @reset-password="emit('resetPassword', $event)"
             @ban="emit('ban', $event)"
@@ -117,108 +170,45 @@ function formatProvider(provider: string) {
             @remove="emit('remove', $event)"
             @view-sessions="emit('viewSessions', $event)"
           />
-        </div>
-      </li>
-    </ul>
-
-    <div
-      class="hidden overflow-x-auto rounded-box border border-base-300 md:block"
-    >
-      <table class="table table-zebra">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Sign-in providers</th>
-            <th class="min-w-28">Role</th>
-            <th class="min-w-36">Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in users" :key="user.id" class="align-top">
-            <td class="max-w-56 break-words">{{ user.name }}</td>
-            <td class="max-w-64 break-all">{{ user.email }}</td>
-            <td class="min-w-40">
-              <div class="flex flex-wrap gap-1">
-                <span
-                  v-for="provider in user.providers ?? []"
-                  :key="provider"
-                  class="badge badge-outline"
-                >
-                  {{ formatProvider(provider) }}
-                </span>
-                <span v-if="!user.providers?.length" class="text-base-content/70">
-                  None
-                </span>
-              </div>
-            </td>
-            <td class="min-w-28">{{ user.role ?? "user" }}</td>
-            <td class="min-w-36">
-              <span
-                class="badge"
-                :class="
-                  user.banned ? 'badge-error' : 'badge-success badge-outline'
-                "
-              >
-                {{ user.banned ? "Banned" : "Active" }}
-              </span>
-              <AdminUserBanDetails :user="user" />
-            </td>
-            <td class="min-w-48">
-              <AdminUserActions
-                :user="user"
-                @edit="emit('edit', $event)"
-                @reset-password="emit('resetPassword', $event)"
-                @ban="emit('ban', $event)"
-                @unban="emit('unban', $event)"
-                @remove="emit('remove', $event)"
-                @view-sessions="emit('viewSessions', $event)"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        </template>
+      </UTable>
     </div>
   </template>
 
   <div
     v-if="!loading && !error"
-    class="mt-5 flex flex-col gap-3 border-t border-base-300 pt-4 sm:flex-row sm:items-center sm:justify-between"
+    class="mt-5 flex flex-col gap-3 border-t border-default pt-4 sm:flex-row sm:items-center sm:justify-between"
   >
-    <label class="flex items-center gap-2 text-sm" for="admin-user-page-size">
+    <div class="flex items-center gap-2 text-sm">
       <span>Users per page</span>
-      <select
+      <USelect
         id="admin-user-page-size"
-        class="select select-bordered select-sm"
-        :value="limit"
-        @change="
-          emit(
-            'pageSizeChange',
-            Number(($event.target as HTMLSelectElement).value),
-          )
-        "
-      >
-        <option v-for="size in pageSizeOptions" :key="size" :value="size">
-          {{ size }}
-        </option>
-      </select>
-    </label>
+        class="w-24"
+        :items="pageSizeItems"
+        :model-value="limit"
+        aria-label="Users per page"
+        @update:model-value="emit('pageSizeChange', Number($event))"
+      />
+    </div>
     <div class="grid grid-cols-2 gap-2 sm:flex sm:items-center">
-      <button
-        class="btn btn-sm"
+      <UButton
+        color="neutral"
+        variant="outline"
+        size="sm"
         :disabled="!offset"
         @click="emit('pageChange', Math.max(0, (offset ?? 0) - (limit ?? 1)))"
       >
         Previous
-      </button>
-      <button
-        class="btn btn-sm"
+      </UButton>
+      <UButton
+        color="neutral"
+        variant="outline"
+        size="sm"
         :disabled="(offset ?? 0) + (limit ?? 0) >= total"
         @click="emit('pageChange', (offset ?? 0) + (limit ?? 1))"
       >
         Next
-      </button>
+      </UButton>
     </div>
   </div>
 </template>

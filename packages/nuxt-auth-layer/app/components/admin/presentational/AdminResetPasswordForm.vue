@@ -47,10 +47,9 @@ function handleSubmit() {
         name="confirmPassword"
       />
 
-      <button class="btn btn-primary mt-4" type="submit" :disabled="props.loading">
-        <span v-if="props.loading" class="loading loading-spinner" />
+      <UButton class="mt-4" type="submit" :loading="props.loading">
         {{ props.loading ? "Resetting..." : "Reset password" }}
-      </button>
+      </UButton>
     </Fieldset>
   </form>
 </template>

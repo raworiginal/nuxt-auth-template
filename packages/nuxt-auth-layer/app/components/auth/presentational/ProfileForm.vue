@@ -23,6 +23,12 @@ const form = reactive<ProfileFormData>({
   name: user.name,
   image: user.image,
 });
+const profileImage = computed({
+  get: () => form.image,
+  set: (value: string) => {
+    form.image = value;
+  },
+});
 
 function handleSubmit() {
   emit("submit", { ...form });
@@ -39,52 +45,36 @@ function handleSubmit() {
         {{ successMessage }}
       </p>
 
-      <label class="label" for="profile-name">Name</label>
-      <input
-        id="profile-name"
-        v-model="form.name"
-        name="name"
-        type="text"
-        class="input"
-        autocomplete="name"
-        :aria-invalid="Boolean(fieldErrors.name)"
-        aria-describedby="profile-name-error"
-      />
-      <p
-        v-if="fieldErrors.name"
-        id="profile-name-error"
-        class="text-error text-sm"
-        role="alert"
-      >
-        {{ fieldErrors.name }}
-      </p>
+      <UFormField label="Name" name="name" :error="fieldErrors.name">
+        <UInput
+          id="profile-name"
+          v-model="form.name"
+          name="name"
+          autocomplete="name"
+          class="w-full"
+        />
+      </UFormField>
 
-      <label class="label" for="profile-image">Profile image URL</label>
-      <input
-        id="profile-image"
-        v-model="form.image"
+      <UFormField
+        label="Profile image URL"
         name="image"
-        type="url"
-        class="input"
-        placeholder="https://example.com/avatar.jpg"
-        :aria-invalid="Boolean(fieldErrors.image)"
-        aria-describedby="profile-image-error"
-      />
-      <p
-        v-if="fieldErrors.image"
-        id="profile-image-error"
-        class="text-error text-sm"
-        role="alert"
+        :error="fieldErrors.image"
       >
-        {{ fieldErrors.image }}
-      </p>
+        <UInput
+          id="profile-image"
+          v-model="profileImage"
+          name="image"
+          type="url"
+          placeholder="https://example.com/avatar.jpg"
+          class="w-full"
+        />
+      </UFormField>
 
       <div class="mt-4 flex gap-2">
-        <button class="btn btn-primary" type="submit">
-          <span v-if="loading" class="loading loading-spinner" />
+        <UButton type="submit" :loading="loading">
           {{ loading ? "Saving..." : "Save changes" }}
-        </button>
-        <NuxtLink class="btn btn-error" to="/app">Cancel</NuxtLink>
+        </UButton>
+        <UButton to="/app" color="neutral" variant="outline">Cancel</UButton>
       </div>
     </Fieldset>
   </form>

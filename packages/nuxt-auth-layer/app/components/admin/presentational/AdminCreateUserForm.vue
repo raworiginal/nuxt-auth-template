@@ -35,45 +35,34 @@ function handleSubmit() {
         {{ props.successMessage }}
       </p>
 
-      <label class="label mt-2" for="admin-create-user-name">Name</label>
-      <input
-        id="admin-create-user-name"
-        v-model="form.name"
-        class="input"
+      <UFormField
+        label="Name"
         name="name"
-        type="text"
-        autocomplete="name"
-        :aria-invalid="Boolean(props.fieldErrors.name)"
-        aria-describedby="admin-create-user-name-error"
-      />
-      <p
-        v-if="props.fieldErrors.name"
-        id="admin-create-user-name-error"
-        class="text-error text-sm"
-        role="alert"
+        :error="props.fieldErrors.name"
       >
-        {{ props.fieldErrors.name }}
-      </p>
+        <UInput
+          id="admin-create-user-name"
+          v-model="form.name"
+          name="name"
+          autocomplete="name"
+          class="w-full"
+        />
+      </UFormField>
 
-      <label class="label mt-2" for="admin-create-user-email">Email</label>
-      <input
-        id="admin-create-user-email"
-        v-model="form.email"
-        class="input"
+      <UFormField
+        label="Email"
         name="email"
-        type="email"
-        autocomplete="email"
-        :aria-invalid="Boolean(props.fieldErrors.email)"
-        aria-describedby="admin-create-user-email-error"
-      />
-      <p
-        v-if="props.fieldErrors.email"
-        id="admin-create-user-email-error"
-        class="text-error text-sm"
-        role="alert"
+        :error="props.fieldErrors.email"
       >
-        {{ props.fieldErrors.email }}
-      </p>
+        <UInput
+          id="admin-create-user-email"
+          v-model="form.email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          class="w-full"
+        />
+      </UFormField>
 
       <PasswordField
         v-model:password="form.password"
@@ -90,31 +79,22 @@ function handleSubmit() {
         name="confirmPassword"
       />
 
-      <label class="label mt-2" for="admin-create-user-role">Role</label>
-      <select
-        id="admin-create-user-role"
-        v-model="form.role"
-        class="select"
-        name="role"
-        :aria-invalid="Boolean(props.fieldErrors.role)"
-        aria-describedby="admin-create-user-role-error"
-      >
-        <option value="user">User</option>
-        <option value="admin">Admin</option>
-      </select>
-      <p
-        v-if="props.fieldErrors.role"
-        id="admin-create-user-role-error"
-        class="text-error text-sm"
-        role="alert"
-      >
-        {{ props.fieldErrors.role }}
-      </p>
+      <UFormField label="Role" name="role" :error="props.fieldErrors.role">
+        <USelect
+          id="admin-create-user-role"
+          v-model="form.role"
+          name="role"
+          :items="[
+            { label: 'User', value: 'user' },
+            { label: 'Admin', value: 'admin' },
+          ]"
+          class="w-full"
+        />
+      </UFormField>
 
-      <button class="btn btn-primary mt-4" type="submit" :disabled="props.loading">
-        <span v-if="props.loading" class="loading loading-spinner" />
+      <UButton class="mt-4" type="submit" :loading="props.loading">
         {{ props.loading ? "Creating..." : "Create user" }}
-      </button>
+      </UButton>
     </Fieldset>
   </form>
 </template>
