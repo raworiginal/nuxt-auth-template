@@ -51,6 +51,9 @@ importers:
       dotenv:
         specifier: ^18.0.4
         version: 18.0.4
+      drizzle-kit:
+        specifier: 1.0.0-rc.4
+        version: 1.0.0-rc.4
       drizzle-orm:
         specifier: 1.0.0-rc.4
         version: 1.0.0-rc.4(@types/pg@8.23.1)(pg@8.23.0)(postgres@3.4.9)(zod@4.6.7)
@@ -60,12 +63,18 @@ importers:
       nuxt:
         specifier: '>=4.5.2 <5'
         version: 4.5.2(@babel/plugin-syntax-jsx@7.29.7(@babel/core@7.29.7(supports-color@10.2.2)))(@babel/plugin-syntax-typescript@7.29.7(@babel/core@7.29.7(supports-color@10.2.2)))(@oxc-project/types@0.151.0)(@types/node@26.6.3)(@vue/compiler-sfc@3.5.43)(db0@0.3.4(drizzle-orm@1.0.0-rc.4(@types/pg@8.23.1)(pg@8.23.0)(postgres@3.4.9)(zod@4.6.7)))(drizzle-orm@1.0.0-rc.4(@types/pg@8.23.1)(pg@8.23.0)(postgres@3.4.9)(zod@4.6.7))(esbuild@0.28.2)(ioredis@5.11.1(supports-color@10.2.2))(lightningcss@1.33.0)(magicast@0.5.5)(rolldown@1.2.10)(rollup-plugin-visualizer@7.1.1(rolldown@1.2.10)(rollup@4.63.4))(rollup@4.63.4)(srvx@0.11.22)(supports-color@10.2.2)(terser@5.51.2)(tsx@4.23.15)(typescript@5.9.3)(vite@8.3.0(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15))(vue-tsc@3.3.14(typescript@5.9.3))
+      pg:
+        specifier: ^8.23.0
+        version: 8.23.0
       postgres:
         specifier: ^3.4.9
         version: 3.4.9
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
+      tsx:
+        specifier: ^4.23.15
+        version: 4.23.15
       vue:
         specifier: '>=3.5.0 <4'
         version: 3.5.43(typescript@5.9.3)
@@ -8999,15 +9008,13 @@ snapshots:
   pg-cloudflare@1.4.0:
     optional: true
 
-  pg-connection-string@2.14.0:
-    optional: true
+  pg-connection-string@2.14.0: {}
 
   pg-int8@1.0.1: {}
 
   pg-pool@3.14.0(pg@8.23.0):
     dependencies:
       pg: 8.23.0
-    optional: true
 
   pg-protocol@1.16.0: {}
 
@@ -9028,12 +9035,10 @@ snapshots:
       pgpass: 1.0.5
     optionalDependencies:
       pg-cloudflare: 1.4.0
-    optional: true
 
   pgpass@1.0.5:
     dependencies:
       split2: 4.2.0
-    optional: true
 
   picocolors@1.1.1: {}
 
@@ -9575,8 +9580,7 @@ snapshots:
 
   source-map@0.8.0: {}
 
-  split2@4.2.0:
-    optional: true
+  split2@4.2.0: {}
 
   srvx@0.11.22: {}
 

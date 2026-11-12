@@ -2,6 +2,10 @@
 
 Releases follow semantic versioning. Every release that changes the database schema must include its migration and describe the required consumer action here.
 
+## 0.1.1
+
+- Add a setup command that applies the packaged database migrations and creates the initial admin user from environment variables.
+
 ## 0.1.0
 
 - Initial versioned layer extracted from the Nuxt Auth Template.
