@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SocialProvider } from "#layers/nuxt-auth-layer/app/types/auth";
+import type { SocialProvider } from "#shared/auth/types/auth";
 
 const { fieldErrors, loading, error, submit } = useLogin();
 const { data: socialProviders } = await useFetch<SocialProvider[]>(

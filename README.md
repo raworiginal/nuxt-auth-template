@@ -1,51 +1,90 @@
-# Nuxt Auth Template
+# Nuxt Auth Starter
 
-This repository is an integration demo for the reusable [`@raworiginal/nuxt-auth-layer`](./packages/nuxt-auth-layer) package. The root Nuxt app consumes the layer through the pnpm workspace, so auth changes can be verified here before publishing a version.
+A Nuxt 4 starter project with Better Auth, PostgreSQL/Drizzle, and a local Nuxt layer for the default auth and admin experience. This repository is intended to be copied as a project template; it is not published as an npm package.
 
-## Local setup
+## Start a project
 
-Requirements: Node.js, pnpm, and Docker Compose (or a PostgreSQL database you manage).
+1. Create a project from this repository using GitHub's **Use this template** flow, or clone it.
+2. Install dependencies and configure the local environment:
 
-1. Install dependencies and create a local environment file:
+   ```sh
+   pnpm install
+   cp .env.example .env
+   ```
 
-```sh
-pnpm install
-cp .env.example .env
+3. Set a strong `BETTER_AUTH_SECRET` (at least 32 characters) and `ADMIN_PASSWORD` (at least 12 characters) in `.env`. The other example values work for local development.
+4. Start PostgreSQL and set up the database and initial admin:
+
+   ```sh
+   docker compose up -d
+   pnpm auth:setup
+   ```
+
+   The setup script applies pending migrations and creates the initial admin if it does not already exist. An existing admin is left unchanged; setup stops if the configured email belongs to a non-admin account.
+5. Start the app:
+
+   ```sh
+   pnpm dev
+   ```
+
+   Visit `http://localhost:3000`, sign in at `/login`, and visit `/admin`.
+
+## How the project is organized
+
+- `layers/auth/` contains the default admin/profile pages, components, composables, route rules, and styling. It is a local Nuxt layer, not a package dependency.
+- `app/` contains project-owned pages and UI, including login, registration, navigation, and Better Auth client configuration.
+- `server/` contains this project's Better Auth server configuration, API handlers, database schema, and migrations.
+- `shared/auth/` contains schemas and types used by both the app and server.
+
+The root `nuxt.config.ts` extends `./layers/auth`. To replace a layer page or component, add a project file at the same path under `app/`; project files take priority over extended-layer files. You can also edit or remove the local layer directly in your copied project.
+
+## Customize Better Auth
+
+Server and client configuration live in the project so each app can add the plugins it needs. For example, to add Better Auth's username plugin, add `username()` to `server/auth.config.ts` and `usernameClient()` to `app/auth.config.ts`:
+
+```ts
+// server/auth.config.ts
+import { username } from "better-auth/plugins";
+
+// Keep the existing config and add username() to its plugins array:
+plugins: [admin(), username()],
 ```
 
-2. Edit `.env`. The Docker values below work for local development; replace the secret and admin password with your own values. Generate a Better Auth secret with `openssl rand -base64 32`.
+```ts
+// app/auth.config.ts
+import { usernameClient } from "better-auth/client/plugins";
+
+// Keep the existing client config and add usernameClient():
+plugins: [adminClient(), usernameClient()],
+```
+
+Some plugins add database fields or tables. Update `server/db/schema/`, generate and review a migration, then apply it with `pnpm db:migrate`. The setup script applies migrations from this project, so plugin-specific migrations belong here too.
+
+## Configuration
+
+The app uses PostgreSQL. Configure `DATABASE_URL` and `BETTER_AUTH_SECRET` in the environment. Set `NUXT_PUBLIC_SITE_URL` for production deployments where the public URL cannot be inferred. Social sign-in is optional; set both variables for a provider to enable it:
 
 ```dotenv
-POSTGRES_DB=ProjectDB
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=change_me_locally
-DATABASE_URL=postgres://postgres:change_me_locally@localhost:5432/ProjectDB
-BETTER_AUTH_SECRET=replace-with-output-from-openssl-rand-base64-32
-NUXT_PUBLIC_SITE_URL=http://localhost:3000
-
-ADMIN_NAME=Site Administrator
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=replace-with-a-strong-password-of-at-least-12-characters
+NUXT_GOOGLE_CLIENT_ID=...
+NUXT_GOOGLE_CLIENT_SECRET=...
+NUXT_GITHUB_CLIENT_ID=...
+NUXT_GITHUB_CLIENT_SECRET=...
 ```
 
-`BETTER_AUTH_SECRET` must be at least 32 characters; `ADMIN_PASSWORD` must be at least 12. Keep `.env` out of source control and use production-grade credentials and a managed secret store outside local development.
+Register the matching callback URLs with each OAuth provider:
 
-3. Start PostgreSQL and initialize the database:
+- `https://your-domain/api/auth/callback/google`
+- `https://your-domain/api/auth/callback/github`
+
+## Database commands
 
 ```sh
-docker compose up -d
-pnpm exec nuxt-auth-layer-setup
+pnpm db:generate  # Generate a migration from server/db/schema
+pnpm db:migrate   # Apply pending migrations
+pnpm auth:setup   # Apply migrations and create the initial admin
 ```
 
-The setup command applies the layer's migrations, then creates the initial admin using the `ADMIN_*` values. It is safe to rerun: an existing admin is left unchanged. If the configured email belongs to a non-admin account, setup stops without changing it. Don't run `pnpm db:migrate` as well during initial setup; the setup command already migrates.
-
-4. Start the app:
-
-```sh
-pnpm dev
-```
-
-Open `http://localhost:3000`, sign in at `/login` with the configured admin email and password, and visit `/admin` to verify the admin tools. After upgrading the layer, rerun `pnpm exec nuxt-auth-layer-setup` to apply any pending migrations; it won't reset an existing admin's password.
+Keep `.env` and production credentials out of source control. For production, use a secret manager and a managed PostgreSQL database.
 
 ## Checks
 
@@ -53,11 +92,3 @@ Open `http://localhost:3000`, sign in at `/login` with the configured admin emai
 pnpm typecheck
 pnpm build
 ```
-
-## Using the layer in another app
-
-Install a released version of `@raworiginal/nuxt-auth-layer` and add it to the Nuxt `extends` array. See the [layer documentation](./packages/nuxt-auth-layer/README.md) for consumer setup, configuration, and migration instructions.
-
-## Maintaining the layer
-
-Generate schema migrations with `pnpm db:generate`, commit them in `packages/nuxt-auth-layer`, and verify changes with `pnpm typecheck` and `pnpm build`. Update the layer package's changelog and version before publishing.

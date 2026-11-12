@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RegisterFormData } from "#layers/nuxt-auth-layer/app/types/auth";
+import type { RegisterFormData } from "#shared/auth/types/auth";
 
 const {
   loading,

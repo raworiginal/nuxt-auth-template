@@ -2,7 +2,7 @@
 import type {
   LoginFormData,
   SocialProvider,
-} from "#layers/nuxt-auth-layer/app/types/auth";
+} from "#shared/auth/types/auth";
 
 const {
   loading,
