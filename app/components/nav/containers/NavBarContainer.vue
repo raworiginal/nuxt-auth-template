@@ -18,6 +18,7 @@ const { loggedIn, user } = useUserSession();
     <NavMenu :logged-in="loggedIn" horizontal />
 
     <template #right>
+      <UColorModeButton />
       <NavUserMenu v-if="loggedIn" :user="user" />
     </template>
 
