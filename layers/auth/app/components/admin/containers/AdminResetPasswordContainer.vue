@@ -15,7 +15,6 @@ const emit = defineEmits<{
 const open = defineModel<boolean>("open", { required: true });
 const formKey = ref(0);
 const {
-  fieldErrors,
   loading,
   error,
   successMessage,
@@ -58,7 +57,6 @@ function handleSubmit(input: ResetAdminUserPasswordFormData) {
     <AdminResetPasswordForm
       v-if="props.user"
       :key="formKey"
-      :field-errors="fieldErrors"
       :loading="loading"
       :error="error"
       @submit="handleSubmit"

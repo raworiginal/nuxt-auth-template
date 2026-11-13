@@ -1,11 +1,19 @@
 export default defineNuxtConfig({
   extends: ["./layers/auth"],
+  modules: ["@nuxthub/core", "@nuxtjs/better-auth", "@nuxt/ui"],
   srcDir: "app/",
   components: [{ path: "~/components", pathPrefix: false }],
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
+  hub: {
+    db: {
+      dialect: "postgresql",
+      driver: "postgres-js",
+      applyMigrationsDuringBuild: false,
+      applyMigrationsDuringDev: false,
+    },
+  },
   runtimeConfig: {
-    databaseUrl: process.env.DATABASE_URL,
     googleClientId: "",
     googleClientSecret: "",
     githubClientId: "",

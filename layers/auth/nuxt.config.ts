@@ -9,8 +9,8 @@ export default defineNuxtConfig({
     name: "auth",
   },
   srcDir: join(layerRoot, "app"),
-  modules: ["@nuxtjs/better-auth", "@nuxt/ui"],
   auth: {
+    schema: { casing: "snake_case" },
     redirects: {
       login: "/login",
       guest: "/app",

@@ -3,14 +3,9 @@ import type { ChangePasswordFormData } from "#shared/auth/types/auth";
 import { passwordChangeSchema } from "#shared/auth/schemas/auth";
 import type { FormSubmitEvent } from "@nuxt/ui";
 
-const {
-  loading,
-  error: authError,
-  fieldErrors,
-} = defineProps<{
+const { loading, error: authError } = defineProps<{
   loading: boolean;
   error: string | null;
-  fieldErrors: Record<string, string>;
 }>();
 
 const emit = defineEmits<{
@@ -36,7 +31,6 @@ function handleSubmit(event: FormSubmitEvent<ChangePasswordFormData>) {
       </p>
       <PasswordField
         v-model:password="form.currentPassword"
-        :error="fieldErrors.currentPassword"
         id="current-password"
         label="Current password"
         name="currentPassword"
@@ -44,14 +38,12 @@ function handleSubmit(event: FormSubmitEvent<ChangePasswordFormData>) {
       />
       <PasswordField
         v-model:password="form.newPassword"
-        :error="fieldErrors.newPassword"
         id="new-password"
         label="New password"
         name="newPassword"
       />
       <PasswordField
         v-model:password="form.confirmPassword"
-        :error="fieldErrors.confirmPassword"
         id="confirm-new-password"
         label="Confirm new password"
         name="confirmPassword"

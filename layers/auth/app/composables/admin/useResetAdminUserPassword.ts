@@ -1,12 +1,10 @@
 import { getErrorMessage } from "#layers/auth/app/utils/error";
-import { resetAdminUserPasswordSchema } from "#shared/auth/schemas/admin";
 import type { ResetAdminUserPasswordInput } from "#shared/auth/types/admin";
 
 export function useResetAdminUserPassword() {
   const action = useAuthClientAction(
     (client) => client.admin.setUserPassword,
   );
-  const fieldErrors = ref<Record<string, string>>({});
   const successMessage = ref<string | null>(null);
   const showActionError = ref(false);
   const loading = computed(() => action.status.value === "pending");
@@ -17,7 +15,6 @@ export function useResetAdminUserPassword() {
   );
 
   function clearState() {
-    fieldErrors.value = {};
     successMessage.value = null;
     showActionError.value = false;
   }
@@ -25,21 +22,9 @@ export function useResetAdminUserPassword() {
   async function submit(input: ResetAdminUserPasswordInput) {
     clearState();
 
-    const result = resetAdminUserPasswordSchema.safeParse(input);
-
-    if (!result.success) {
-      for (const issue of result.error.issues) {
-        const field = issue.path[0];
-        if (typeof field === "string" && !fieldErrors.value[field]) {
-          fieldErrors.value[field] = issue.message;
-        }
-      }
-      return;
-    }
-
     await action.execute({
-      userId: result.data.userId,
-      newPassword: result.data.newPassword,
+      userId: input.userId,
+      newPassword: input.newPassword,
     });
 
     showActionError.value = true;
@@ -50,7 +35,6 @@ export function useResetAdminUserPassword() {
   }
 
   return {
-    fieldErrors,
     loading,
     error,
     successMessage,

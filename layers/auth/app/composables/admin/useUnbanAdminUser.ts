@@ -1,10 +1,8 @@
 import { getErrorMessage } from "#layers/auth/app/utils/error";
-import { unbanAdminUserSchema } from "#shared/auth/schemas/admin";
 import type { UnbanAdminUserInput } from "#shared/auth/types/admin";
 
 export function useUnbanAdminUser() {
   const action = useAuthClientAction((client) => client.admin.unbanUser);
-  const fieldErrors = ref<Record<string, string>>({});
   const successMessage = ref<string | null>(null);
   const showActionError = ref(false);
   const loading = computed(() => action.status.value === "pending");
@@ -15,7 +13,6 @@ export function useUnbanAdminUser() {
   );
 
   function clearState() {
-    fieldErrors.value = {};
     successMessage.value = null;
     showActionError.value = false;
   }
@@ -23,18 +20,7 @@ export function useUnbanAdminUser() {
   async function submit(input: UnbanAdminUserInput) {
     clearState();
 
-    const result = unbanAdminUserSchema.safeParse(input);
-    if (!result.success) {
-      for (const issue of result.error.issues) {
-        const field = issue.path[0];
-        if (typeof field === "string" && !fieldErrors.value[field]) {
-          fieldErrors.value[field] = issue.message;
-        }
-      }
-      return;
-    }
-
-    await action.execute({ userId: result.data.userId });
+    await action.execute({ userId: input.userId });
     showActionError.value = true;
     if (action.status.value === "success") {
       successMessage.value = "User unbanned successfully.";
@@ -42,7 +28,6 @@ export function useUnbanAdminUser() {
   }
 
   return {
-    fieldErrors,
     loading,
     error,
     successMessage,

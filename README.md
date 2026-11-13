@@ -1,6 +1,6 @@
 # Nuxt Auth Starter
 
-A Nuxt 4 starter project with Better Auth, PostgreSQL/Drizzle, and a local Nuxt layer for the default auth and admin experience. This repository is intended to be copied as a project template; it is not published as an npm package.
+A Nuxt 4 starter project with Better Auth, NuxtHub, and PostgreSQL. It includes a local Nuxt layer for the default auth and admin experience. This repository is intended to be copied as a project template; it is not published as an npm package.
 
 ## Start a project
 
@@ -12,7 +12,7 @@ A Nuxt 4 starter project with Better Auth, PostgreSQL/Drizzle, and a local Nuxt 
    cp .env.example .env
    ```
 
-3. Set a strong `NUXT_BETTER_AUTH_SECRET` (at least 32 characters) and `ADMIN_PASSWORD` (at least 12 characters) in `.env`. `NUXT_APP_SECRET` is also supported by the module; the setup script uses it when the dedicated auth secret is absent. Existing projects can keep using the legacy `BETTER_AUTH_SECRET` name.
+3. Set a strong `NUXT_APP_SECRET` (at least 32 characters) and `ADMIN_PASSWORD` (at least 12 characters) in `.env`. `NUXT_BETTER_AUTH_SECRET` can be used when you want a dedicated Better Auth secret.
 4. Start PostgreSQL and set up the database and initial admin:
 
    ```sh
@@ -20,7 +20,7 @@ A Nuxt 4 starter project with Better Auth, PostgreSQL/Drizzle, and a local Nuxt 
    pnpm auth:setup
    ```
 
-   The setup script applies pending migrations and creates the initial admin if it does not already exist. An existing admin is left unchanged; setup stops if the configured email belongs to a non-admin account.
+   The setup command prepares Nuxt, applies pending migrations, and creates the initial admin if it does not already exist. An existing admin is left unchanged; setup stops if the configured email belongs to a non-admin account.
 5. Start the app:
 
    ```sh
@@ -33,7 +33,7 @@ A Nuxt 4 starter project with Better Auth, PostgreSQL/Drizzle, and a local Nuxt 
 
 - `layers/auth/` contains the default admin/profile pages, components, composables, route rules, and styling. It is a local Nuxt layer, not a package dependency.
 - `app/` contains project-owned pages and UI, including login, registration, navigation, and Better Auth client configuration.
-- `server/` contains this project's Better Auth server configuration, API handlers, database schema, and migrations.
+- `server/` contains this project's Better Auth server configuration, API handlers, and NuxtHub-managed PostgreSQL migrations. Better Auth tables are generated from the enabled plugins.
 - `shared/auth/` contains schemas and types used by both the app and server.
 
 The root `nuxt.config.ts` extends `./layers/auth`. To replace a layer page or component, add a project file at the same path under `app/`; project files take priority over extended-layer files. You can also edit or remove the local layer directly in your copied project.
@@ -58,11 +58,11 @@ import { usernameClient } from "better-auth/client/plugins";
 plugins: [adminClient(), usernameClient()],
 ```
 
-Some plugins add database fields or tables. Update `server/db/schema/`, generate and review a migration, then apply it with `pnpm db:migrate`. The setup script applies migrations from this project, so plugin-specific migrations belong here too.
+Better Auth plugin tables are generated from the server configuration. Restart Nuxt after changing plugins, generate and review a migration with `pnpm db:generate`, then apply it with `pnpm db:migrate`. Put application-owned tables in `server/db/schema/`; do not redefine Better Auth tables there.
 
 ## Configuration
 
-The app uses PostgreSQL. Configure `DATABASE_URL` and `NUXT_BETTER_AUTH_SECRET` in the environment. Set `NUXT_PUBLIC_SITE_URL` for production deployments where the public URL cannot be inferred. Social sign-in is optional; set both variables for a provider to enable it:
+The app uses PostgreSQL through NuxtHub. Set `DATABASE_URL` and `NUXT_APP_SECRET` in the environment. Set `NUXT_PUBLIC_SITE_URL` to the canonical production URL. Social sign-in is optional; set both variables for a provider to enable it:
 
 ```dotenv
 NUXT_GOOGLE_CLIENT_ID=...
@@ -76,15 +76,25 @@ Register the matching callback URLs with each OAuth provider:
 - `https://your-domain/api/auth/callback/google`
 - `https://your-domain/api/auth/callback/github`
 
+### Netlify or Vercel with Neon
+
+Deploy with the standard Node/serverless runtime (Node 22.19+), not an Edge runtime. Set `DATABASE_URL` to Neon’s pooled connection string for application traffic. For migrations, set `MIGRATIONS_DATABASE_URL` to Neon’s direct (non-pooled) connection string; `pnpm db:migrate` and `pnpm auth:setup` prefer it when present. Both URLs must target the same database. Keep production and preview database credentials isolated.
+
+Run migrations as a release/deploy step, not in the application build. Set `NUXT_PUBLIC_SITE_URL` to the production domain and configure the OAuth callback URLs above. Add secrets in the hosting provider’s environment settings rather than committing them.
+
+### Self-hosted PostgreSQL
+
+Use the included Docker Compose service for local development. For production, provide a PostgreSQL connection string through `DATABASE_URL` and run `pnpm db:migrate` before deploying the app.
+
 ## Database commands
 
 ```sh
-pnpm db:generate  # Generate a migration from server/db/schema
+pnpm db:generate  # Generate a migration from the NuxtHub/Better Auth schema
 pnpm db:migrate   # Apply pending migrations
-pnpm auth:setup   # Apply migrations and create the initial admin
+pnpm auth:setup   # Prepare Nuxt, apply migrations, and create the initial admin
 ```
 
-Keep `.env` and production credentials out of source control. For production, use a secret manager and a managed PostgreSQL database.
+Keep `.env` and production credentials out of source control. Use a secret manager and a managed PostgreSQL database such as Neon for hosted deployments.
 
 ## Checks
 

@@ -1,19 +1,15 @@
 import "dotenv/config";
 import { spawnSync } from "node:child_process";
-import { createRequire } from "node:module";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import * as authSchema from "../server/db/schema/auth-schema.ts";
-import { relations } from "../server/db/schema/relations.ts";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
-const require = createRequire(import.meta.url);
 
 function requiredEnv(name: string): string {
   const value = process.env[name]?.trim();
@@ -49,7 +45,9 @@ function loadSetupConfig() {
   }
 
   return {
-    databaseUrl: requiredEnv("DATABASE_URL"),
+    databaseUrl:
+      process.env.MIGRATIONS_DATABASE_URL?.trim() ||
+      requiredEnv("DATABASE_URL"),
     secret: requiredAuthSecret(),
     name: requiredEnv("ADMIN_NAME"),
     email,
@@ -58,19 +56,18 @@ function loadSetupConfig() {
   };
 }
 
-function runMigrations() {
-  const drizzleKitEntry = require.resolve("drizzle-kit");
-  const drizzleKitBin = join(dirname(drizzleKitEntry), "bin.cjs");
-  const drizzleConfig = join(projectRoot, "drizzle.config.ts");
+function runCommand(args: string[], env: NodeJS.ProcessEnv = process.env) {
   const result = spawnSync(
-    process.execPath,
-    [drizzleKitBin, "migrate", "--config", drizzleConfig],
-    { cwd: process.cwd(), env: process.env, stdio: "inherit" },
+    process.platform === "win32" ? "pnpm.cmd" : "pnpm",
+    args,
+    { cwd: projectRoot, env, stdio: "inherit" },
   );
 
   if (result.error) throw result.error;
   if (result.status !== 0) {
-    throw new Error(`Database migration failed (exit code ${result.status ?? "unknown"}).`);
+    throw new Error(
+      `Command pnpm ${args.join(" ")} failed (exit code ${result.status ?? "unknown"}).`,
+    );
   }
 }
 
@@ -80,12 +77,26 @@ async function main() {
     throw new Error("The Better Auth secret must be at least 32 characters long.");
   }
 
+  console.info("Preparing Nuxt and generating the Better Auth schema...");
+  runCommand(["exec", "nuxt", "prepare"]);
+
   console.info("Applying project database migrations...");
-  runMigrations();
+  runCommand(["db:migrate"], {
+    ...process.env,
+    DATABASE_URL: config.databaseUrl,
+    POSTGRES_URL: config.databaseUrl,
+    POSTGRESQL_URL: config.databaseUrl,
+  });
+
+  const authSchemaPath = join(
+    projectRoot,
+    ".nuxt/better-auth/schema.postgresql.mjs",
+  );
+  const authSchema = await import(pathToFileURL(authSchemaPath).href);
 
   const client = postgres(config.databaseUrl, { max: 1 });
   try {
-    const db = drizzle({ client, relations });
+    const db = drizzle({ client, schema: authSchema });
     const [existingUser] = await db
       .select({ role: authSchema.user.role })
       .from(authSchema.user)

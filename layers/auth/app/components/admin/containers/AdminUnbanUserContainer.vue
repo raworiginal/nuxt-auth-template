@@ -11,7 +11,6 @@ const emit = defineEmits<{
 
 const open = defineModel<boolean>("open", { required: true });
 const {
-  fieldErrors,
   loading,
   error,
   successMessage,
@@ -47,9 +46,6 @@ function handleConfirm() {
         Are you sure you want to unban <strong>{{ props.user.name }}</strong>?
       </p>
       <p v-if="error" class="text-error mt-2" role="alert">{{ error }}</p>
-      <p v-if="fieldErrors.userId" class="text-error mt-2" role="alert">
-        {{ fieldErrors.userId }}
-      </p>
     </div>
     <template #footer="{ close }">
       <UButton color="neutral" variant="outline" :disabled="loading" @click="close">

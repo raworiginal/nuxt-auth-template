@@ -6,7 +6,6 @@ import { registerSchema } from "#shared/auth/schemas/auth";
 const props = defineProps<{
   loading: boolean;
   error: string | null;
-  fieldErrors: Record<string, string>;
 }>();
 
 const emit = defineEmits<{
@@ -22,7 +21,6 @@ const fields = computed<AuthFormField[]>(() => [
     autocomplete: "email",
     defaultValue: "",
     required: true,
-    error: props.fieldErrors.email,
   },
   {
     name: "name",
@@ -32,7 +30,6 @@ const fields = computed<AuthFormField[]>(() => [
     autocomplete: "name",
     defaultValue: "",
     required: true,
-    error: props.fieldErrors.name,
   },
   {
     name: "password",
@@ -42,7 +39,6 @@ const fields = computed<AuthFormField[]>(() => [
     autocomplete: "new-password",
     defaultValue: "",
     required: true,
-    error: props.fieldErrors.password,
   },
   {
     name: "confirmPassword",
@@ -52,7 +48,6 @@ const fields = computed<AuthFormField[]>(() => [
     autocomplete: "new-password",
     defaultValue: "",
     required: true,
-    error: props.fieldErrors.confirmPassword,
   },
 ]);
 

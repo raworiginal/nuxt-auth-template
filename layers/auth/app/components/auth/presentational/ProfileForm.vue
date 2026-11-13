@@ -7,12 +7,10 @@ const {
   user,
   loading,
   error: authError,
-  fieldErrors,
 } = defineProps<{
   user: ProfileFormData;
   loading: boolean;
   error: string | null;
-  fieldErrors: Record<string, string>;
 }>();
 
 const emit = defineEmits<{
@@ -50,7 +48,7 @@ function handleSubmit(event: FormSubmitEvent<ProfileFormData>) {
       <p v-if="authError" class="text-error mt-2" role="alert">
         {{ authError }}
       </p>
-      <UFormField label="Name" name="name" :error="fieldErrors.name">
+      <UFormField label="Name" name="name">
         <UInput
           id="profile-name"
           v-model="form.name"
@@ -60,11 +58,7 @@ function handleSubmit(event: FormSubmitEvent<ProfileFormData>) {
         />
       </UFormField>
 
-      <UFormField
-        label="Profile image URL"
-        name="image"
-        :error="fieldErrors.image"
-      >
+      <UFormField label="Profile image URL" name="image">
         <UInput
           id="profile-image"
           v-model="profileImage"

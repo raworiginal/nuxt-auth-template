@@ -6,7 +6,6 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 const props = defineProps<{
   loading: boolean;
   error: string | null;
-  fieldErrors: Record<string, string>;
 }>();
 
 const emit = defineEmits<{
@@ -38,11 +37,7 @@ function handleSubmit(event: FormSubmitEvent<CreateAdminUserFormData>) {
     <p v-if="props.error" class="text-error" role="alert">
       {{ props.error }}
     </p>
-    <UFormField
-      label="Name"
-      name="name"
-      :error="props.fieldErrors.name"
-    >
+    <UFormField label="Name" name="name">
       <UInput
         id="admin-create-user-name"
         v-model="form.name"
@@ -52,11 +47,7 @@ function handleSubmit(event: FormSubmitEvent<CreateAdminUserFormData>) {
       />
     </UFormField>
 
-    <UFormField
-      label="Email"
-      name="email"
-      :error="props.fieldErrors.email"
-    >
+    <UFormField label="Email" name="email">
       <UInput
         id="admin-create-user-email"
         v-model="form.email"
@@ -69,20 +60,18 @@ function handleSubmit(event: FormSubmitEvent<CreateAdminUserFormData>) {
 
     <PasswordField
       v-model:password="form.password"
-      :error="props.fieldErrors.password"
       id="admin-create-user-password"
       label="Password"
       name="password"
     />
     <PasswordField
       v-model:password="form.confirmPassword"
-      :error="props.fieldErrors.confirmPassword"
       id="admin-create-user-confirm-password"
       label="Confirm password"
       name="confirmPassword"
     />
 
-    <UFormField label="Role" name="role" :error="props.fieldErrors.role">
+    <UFormField label="Role" name="role">
       <USelect
         id="admin-create-user-role"
         v-model="form.role"

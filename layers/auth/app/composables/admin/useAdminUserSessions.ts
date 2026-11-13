@@ -10,11 +10,17 @@ import type {
 
 export function useAdminUserSessions() {
   const sessions = ref<AdminUserSession[]>([]);
+  const requestFetch = useAuthRequestFetch();
+  const action = useAction(async (body: ListAdminUserSessionsInput) => ({
+    response: await requestFetch("/api/admin/user-sessions", {
+      method: "POST",
+      body,
+    }),
+  }));
   const fieldErrors = ref<Record<string, string>>({});
   const error = ref<string | null>(null);
   const successMessage = ref<string | null>(null);
-  const loading = ref(false);
-  const requestFetch = useAuthRequestFetch();
+  const loading = computed(() => action.status.value === "pending");
 
   function clearState() {
     sessions.value = [];
@@ -37,29 +43,10 @@ export function useAdminUserSessions() {
       return;
     }
 
-    loading.value = true;
-    try {
-      const result = await requestFetch("/api/admin/user-sessions", {
-        method: "POST",
-        body: inputResult.data,
-      });
-      const parsed = listAdminUserSessionsResultSchema.safeParse(result);
-
-      if (!parsed.success) {
-        error.value = "The server returned an invalid sessions response.";
-        return;
-      }
-
-      sessions.value = parsed.data.sessions;
-      successMessage.value = "Sessions loaded successfully.";
-    } catch (caughtError: unknown) {
-      const statusCode =
-        typeof caughtError === "object" && caughtError !== null &&
-        "statusCode" in caughtError &&
-        typeof caughtError.statusCode === "number"
-          ? caughtError.statusCode
-          : undefined;
-
+    await action.execute(inputResult.data);
+    if (action.status.value === "error") {
+      const caughtError = action.error.value?.raw;
+      const statusCode = action.error.value?.status;
       if (statusCode === 401) {
         error.value = "Your session has expired. Please sign in again.";
       } else if (statusCode === 403) {
@@ -69,9 +56,19 @@ export function useAdminUserSessions() {
       } else {
         error.value = getErrorMessage(caughtError);
       }
-    } finally {
-      loading.value = false;
+      return;
     }
+
+    const parsed = listAdminUserSessionsResultSchema.safeParse(
+      action.data.value?.response,
+    );
+    if (!parsed.success) {
+      error.value = "The server returned an invalid sessions response.";
+      return;
+    }
+
+    sessions.value = parsed.data.sessions;
+    successMessage.value = "Sessions loaded successfully.";
   }
 
   return { sessions, fieldErrors, error, successMessage, loading, clearState, load };

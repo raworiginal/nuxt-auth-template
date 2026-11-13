@@ -9,49 +9,33 @@ type DialogAction =
   | "unban"
   | "viewSessions"
   | "remove";
+type ActiveDialogAction = Exclude<DialogAction, "remove">;
+type ActiveDialog = { action: ActiveDialogAction; user: AdminUser } | null;
 
 const emit = defineEmits<{
   refresh: [];
 }>();
 
-const editUser = ref<AdminUser | null>(null);
-const editOpen = ref(false);
-const resetUser = ref<AdminUser | null>(null);
-const resetOpen = ref(false);
-const banUser = ref<AdminUser | null>(null);
-const banOpen = ref(false);
-const unbanUser = ref<AdminUser | null>(null);
-const unbanOpen = ref(false);
-const sessionsUser = ref<AdminUser | null>(null);
-const sessionsOpen = ref(false);
+const activeDialog = ref<ActiveDialog>(null);
 const overlay = useOverlay();
 const removeDialog = overlay.create(AdminRemoveUserContainer);
 
 function open(action: DialogAction, user: AdminUser) {
-  switch (action) {
-    case "edit":
-      editUser.value = user;
-      editOpen.value = true;
-      break;
-    case "resetPassword":
-      resetUser.value = user;
-      resetOpen.value = true;
-      break;
-    case "ban":
-      banUser.value = user;
-      banOpen.value = true;
-      break;
-    case "unban":
-      unbanUser.value = user;
-      unbanOpen.value = true;
-      break;
-    case "viewSessions":
-      sessionsUser.value = user;
-      sessionsOpen.value = true;
-      break;
-    case "remove":
-      void confirmRemove(user);
-      break;
+  if (action === "remove") {
+    void confirmRemove(user);
+    return;
+  }
+
+  activeDialog.value = { action, user };
+}
+
+function dialogUser(action: ActiveDialogAction) {
+  return activeDialog.value?.action === action ? activeDialog.value.user : null;
+}
+
+function setDialogOpen(action: ActiveDialogAction, isOpen: boolean) {
+  if (!isOpen && activeDialog.value?.action === action) {
+    activeDialog.value = null;
   }
 }
 
@@ -60,52 +44,37 @@ async function confirmRemove(user: AdminUser) {
   if (await result) emit("refresh");
 }
 
-watch(editOpen, (isOpen) => {
-  if (!isOpen) editUser.value = null;
-});
-
-watch(resetOpen, (isOpen) => {
-  if (!isOpen) resetUser.value = null;
-});
-
-watch(banOpen, (isOpen) => {
-  if (!isOpen) banUser.value = null;
-});
-
-watch(unbanOpen, (isOpen) => {
-  if (!isOpen) unbanUser.value = null;
-});
-
-watch(sessionsOpen, (isOpen) => {
-  if (!isOpen) sessionsUser.value = null;
-});
-
 defineExpose({ open });
 </script>
 
 <template>
   <AdminEditUserContainer
-    v-model:open="editOpen"
-    :user="editUser"
+    :open="activeDialog?.action === 'edit'"
+    :user="dialogUser('edit')"
+    @update:open="setDialogOpen('edit', $event)"
     @updated="emit('refresh')"
   />
   <AdminResetPasswordContainer
-    v-model:open="resetOpen"
-    :user="resetUser"
+    :open="activeDialog?.action === 'resetPassword'"
+    :user="dialogUser('resetPassword')"
+    @update:open="setDialogOpen('resetPassword', $event)"
     @reset="emit('refresh')"
   />
   <AdminBanUserContainer
-    v-model:open="banOpen"
-    :user="banUser"
+    :open="activeDialog?.action === 'ban'"
+    :user="dialogUser('ban')"
+    @update:open="setDialogOpen('ban', $event)"
     @banned="emit('refresh')"
   />
   <AdminUnbanUserContainer
-    v-model:open="unbanOpen"
-    :user="unbanUser"
+    :open="activeDialog?.action === 'unban'"
+    :user="dialogUser('unban')"
+    @update:open="setDialogOpen('unban', $event)"
     @unbanned="emit('refresh')"
   />
   <AdminUserSessionsContainer
-    v-model:open="sessionsOpen"
-    :user="sessionsUser"
+    :open="activeDialog?.action === 'viewSessions'"
+    :user="dialogUser('viewSessions')"
+    @update:open="setDialogOpen('viewSessions', $event)"
   />
 </template>

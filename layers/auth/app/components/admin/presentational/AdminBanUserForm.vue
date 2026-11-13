@@ -8,7 +8,6 @@ const formSchema = banAdminUserSchema.omit({ userId: true });
 const props = defineProps<{
   loading: boolean;
   error: string | null;
-  fieldErrors: Record<string, string>;
 }>();
 
 const emit = defineEmits<{
@@ -38,7 +37,7 @@ function handleSubmit(event: FormSubmitEvent<BanAdminUserFormData>) {
     <p v-if="props.error" class="text-error" role="alert">
       {{ props.error }}
     </p>
-    <UFormField label="Reason" name="banReason" :error="props.fieldErrors.banReason">
+    <UFormField label="Reason" name="banReason">
       <UTextarea
         id="admin-ban-user-reason"
         v-model="form.banReason"
@@ -52,7 +51,6 @@ function handleSubmit(event: FormSubmitEvent<BanAdminUserFormData>) {
       <UFormField
         label="Duration (leave blank for permanent)"
         name="duration"
-        :error="props.fieldErrors.duration"
       >
         <UInput
           id="admin-ban-user-duration"
@@ -64,7 +62,7 @@ function handleSubmit(event: FormSubmitEvent<BanAdminUserFormData>) {
           step="any"
         />
       </UFormField>
-      <UFormField label="Unit" name="durationUnit" :error="props.fieldErrors.durationUnit">
+      <UFormField label="Unit" name="durationUnit">
         <USelect
           id="admin-ban-user-duration-unit"
           v-model="form.durationUnit"
