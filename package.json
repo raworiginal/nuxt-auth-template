@@ -8,21 +8,21 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "typecheck": "nuxt typecheck",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:generate": "nuxt db generate",
+    "db:migrate": "tsx scripts/migrate.ts",
     "auth:setup": "tsx scripts/setup-admin.ts",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
     "@nuxt/ui": "^4.12.0",
-    "@nuxtjs/better-auth": "^0.3.14",
-    "better-auth": "^1.7.6",
+    "@nuxthub/core": "0.10.12",
+    "@nuxtjs/better-auth": "0.3.16",
+    "better-auth": "1.7.18",
     "dotenv": "^18.0.4",
-    "drizzle-kit": "1.0.0-rc.4",
-    "drizzle-orm": "1.0.0-rc.4",
+    "drizzle-kit": "0.31.11",
+    "drizzle-orm": "0.45.4",
     "h3": "^2.0.8",
     "nuxt": "^4.6.4",
-    "pg": "^8.23.0",
     "postgres": "^3.4.9",
     "tailwindcss": "^4.3.3",
     "zod": "^4.6.7"
@@ -30,10 +30,13 @@
   "devDependencies": {
     "@iconify-json/bi": "^1.2.7",
     "@iconify-json/lucide": "^1.2.154",
-    "@iconify-json/tabler": "^1.2.45",
-    "@types/pg": "^8.23.1",
+    "@types/node": "26.6.3",
+    "auth": "1.7.18",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.3.14"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0 || >=26.0.0"
   }
 }

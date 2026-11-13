@@ -1,17 +1,11 @@
 import { z } from "zod";
+import { nameSchema, passwordSchema } from "./fields";
 
 export const registerSchema = z
   .object({
     email: z.email("Enter a valid email address"),
-    name: z
-      .string()
-      .trim()
-      .min(1, "Name is required")
-      .max(100, "Name must be 100 characters or fewer"),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .max(128, "password must be 128 characters or fewer"),
+    name: nameSchema,
+    password: passwordSchema,
 
     confirmPassword: z.string(),
   })
@@ -26,21 +20,14 @@ export const loginSchema = z.object({
 });
 
 export const profileSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, "Name is required")
-    .max(100, "Name must be 100 characters or fewer"),
+  name: nameSchema,
   image: z.url("Enter a valid URL").or(z.literal("")),
 });
 
 export const passwordChangeSchema = z
   .object({
     currentPassword: z.string().min(1, "Current password is required"),
-    newPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .max(128, "Password must be 128 characters or fewer"),
+    newPassword: passwordSchema,
     confirmPassword: z.string(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {

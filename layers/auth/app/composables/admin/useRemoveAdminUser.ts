@@ -5,26 +5,18 @@ import {
 } from "#shared/auth/schemas/admin";
 import type { RemoveAdminUserInput } from "#shared/auth/types/admin";
 
-function getStatusCode(error: unknown) {
-  if (typeof error !== "object" || error === null) return undefined;
-
-  if ("statusCode" in error && typeof error.statusCode === "number") {
-    return error.statusCode;
-  }
-
-  if ("status" in error && typeof error.status === "number") {
-    return error.status;
-  }
-
-  return undefined;
-}
-
 export function useRemoveAdminUser() {
   const requestFetch = useAuthRequestFetch();
+  const action = useAction(async (body: RemoveAdminUserInput) => ({
+    response: await requestFetch("/api/admin/remove-user", {
+      method: "POST",
+      body,
+    }),
+  }));
   const fieldErrors = ref<Record<string, string>>({});
   const error = ref<string | null>(null);
   const successMessage = ref<string | null>(null);
-  const loading = ref(false);
+  const loading = computed(() => action.status.value === "pending");
 
   function clearState() {
     fieldErrors.value = {};
@@ -46,23 +38,10 @@ export function useRemoveAdminUser() {
       return false;
     }
 
-    loading.value = true;
-    try {
-      const response = removeAdminUserResultSchema.safeParse(
-        await requestFetch("/api/admin/remove-user", {
-          method: "POST",
-          body: parsed.data,
-        }),
-      );
-      if (!response.success || !response.data.success) {
-        error.value = "The server returned an invalid removal response.";
-        return false;
-      }
-
-      successMessage.value = "User removed successfully.";
-      return true;
-    } catch (caughtError: unknown) {
-      const statusCode = getStatusCode(caughtError);
+    await action.execute(parsed.data);
+    if (action.status.value === "error") {
+      const caughtError = action.error.value?.raw;
+      const statusCode = action.error.value?.status;
       if (statusCode === 401) {
         error.value = "Your session has expired. Please sign in again.";
       } else if (statusCode === 403) {
@@ -80,9 +59,18 @@ export function useRemoveAdminUser() {
         error.value = getErrorMessage(caughtError);
       }
       return false;
-    } finally {
-      loading.value = false;
     }
+
+    const response = removeAdminUserResultSchema.safeParse(
+      action.data.value?.response,
+    );
+    if (!response.success || !response.data.success) {
+      error.value = "The server returned an invalid removal response.";
+      return false;
+    }
+
+    successMessage.value = "User removed successfully.";
+    return true;
   }
 
   return { fieldErrors, error, successMessage, loading, clearState, remove };

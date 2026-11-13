@@ -8,7 +8,6 @@ const formSchema = resetAdminUserPasswordSchema.omit({ userId: true });
 const props = defineProps<{
   loading: boolean;
   error: string | null;
-  fieldErrors: Record<string, string>;
 }>();
 
 const emit = defineEmits<{
@@ -39,14 +38,12 @@ function handleSubmit(event: FormSubmitEvent<ResetAdminUserPasswordFormData>) {
     </p>
     <PasswordField
       v-model:password="form.newPassword"
-      :error="props.fieldErrors.newPassword"
       id="admin-reset-password-new"
       label="New password"
       name="newPassword"
     />
     <PasswordField
       v-model:password="form.confirmPassword"
-      :error="props.fieldErrors.confirmPassword"
       id="admin-reset-password-confirm"
       label="Confirm password"
       name="confirmPassword"

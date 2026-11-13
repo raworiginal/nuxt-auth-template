@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SocialProvider } from "#shared/auth/types/auth";
 
-const { fieldErrors, loading, error, submit } = useLogin();
+const { loading, error, submit } = useLogin();
 const { data: socialProviders } = await useFetch<SocialProvider[]>(
   "/api/auth/social-providers",
   { default: () => [] },
@@ -20,7 +20,6 @@ function handleSocialSignIn(provider: SocialProvider) {
 
 <template>
   <LoginForm
-    :field-errors="fieldErrors"
     :loading="loading"
     :error="error"
     :social-providers="socialProviders"

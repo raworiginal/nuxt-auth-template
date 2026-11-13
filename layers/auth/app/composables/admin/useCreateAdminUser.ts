@@ -1,10 +1,8 @@
 import { getErrorMessage } from "#layers/auth/app/utils/error";
-import { createAdminUserSchema } from "#shared/auth/schemas/admin";
 import type { CreateAdminUserFormData } from "#shared/auth/types/admin";
 
 export function useCreateAdminUser() {
   const action = useAuthClientAction((client) => client.admin.createUser);
-  const fieldErrors = ref<Record<string, string>>({});
   const successMessage = ref<string | null>(null);
   const loading = computed(() => action.status.value === "pending");
   const error = computed(() =>
@@ -12,26 +10,13 @@ export function useCreateAdminUser() {
   );
 
   async function submit(input: CreateAdminUserFormData) {
-    fieldErrors.value = {};
     successMessage.value = null;
 
-    const result = createAdminUserSchema.safeParse(input);
-
-    if (!result.success) {
-      for (const issue of result.error.issues) {
-        const field = issue.path[0];
-        if (typeof field === "string" && !fieldErrors.value[field]) {
-          fieldErrors.value[field] = issue.message;
-        }
-      }
-      return;
-    }
-
     await action.execute({
-      name: result.data.name,
-      email: result.data.email,
-      password: result.data.password,
-      role: result.data.role,
+      name: input.name,
+      email: input.email,
+      password: input.password,
+      role: input.role,
     });
 
     if (action.status.value === "success") {
@@ -39,5 +24,5 @@ export function useCreateAdminUser() {
     }
   }
 
-  return { fieldErrors, loading, error, successMessage, submit };
+  return { loading, error, successMessage, submit };
 }

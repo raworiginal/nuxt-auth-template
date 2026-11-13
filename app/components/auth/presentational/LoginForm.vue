@@ -6,7 +6,6 @@ import { loginSchema } from "#shared/auth/schemas/auth";
 const props = defineProps<{
   loading: boolean;
   error: string | null;
-  fieldErrors: Record<string, string>;
   socialProviders: SocialProvider[];
   socialLoading: boolean;
   socialError: string | null;
@@ -26,7 +25,6 @@ const fields = computed<AuthFormField[]>(() => [
     autocomplete: "email",
     defaultValue: "",
     required: true,
-    error: props.fieldErrors.email,
   },
   {
     name: "password",
@@ -36,7 +34,6 @@ const fields = computed<AuthFormField[]>(() => [
     autocomplete: "current-password",
     defaultValue: "",
     required: true,
-    error: props.fieldErrors.password,
   },
 ]);
 

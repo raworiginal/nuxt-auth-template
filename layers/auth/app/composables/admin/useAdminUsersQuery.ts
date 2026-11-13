@@ -17,9 +17,12 @@ export function useAdminUsersQuery() {
   const router = useRouter();
 
   const options = computed<ListUsersOptions>(() => ({
-    limit: Math.min(
-      parseQueryNumber(route.query.limit, DEFAULT_ADMIN_USERS_PAGE_SIZE),
-      MAX_ADMIN_USERS_PAGE_SIZE,
+    limit: Math.max(
+      1,
+      Math.min(
+        parseQueryNumber(route.query.limit, DEFAULT_ADMIN_USERS_PAGE_SIZE),
+        MAX_ADMIN_USERS_PAGE_SIZE,
+      ),
     ),
     offset: parseQueryNumber(route.query.offset, 0),
     searchValue:

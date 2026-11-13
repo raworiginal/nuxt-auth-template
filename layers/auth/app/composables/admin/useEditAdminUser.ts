@@ -1,10 +1,8 @@
 import { getErrorMessage } from "#layers/auth/app/utils/error";
-import { editAdminUserSchema } from "#shared/auth/schemas/admin";
 import type { EditAdminUserInput } from "#shared/auth/types/admin";
 
 export function useEditAdminUser() {
   const action = useAuthClientAction((client) => client.admin.updateUser);
-  const fieldErrors = ref<Record<string, string>>({});
   const successMessage = ref<string | null>(null);
   const showActionError = ref(false);
   const loading = computed(() => action.status.value === "pending");
@@ -15,7 +13,6 @@ export function useEditAdminUser() {
   );
 
   function clearState() {
-    fieldErrors.value = {};
     successMessage.value = null;
     showActionError.value = false;
   }
@@ -23,24 +20,12 @@ export function useEditAdminUser() {
   async function submit(input: EditAdminUserInput) {
     clearState();
 
-    const result = editAdminUserSchema.safeParse(input);
-
-    if (!result.success) {
-      for (const issue of result.error.issues) {
-        const field = issue.path[0];
-        if (typeof field === "string" && !fieldErrors.value[field]) {
-          fieldErrors.value[field] = issue.message;
-        }
-      }
-      return;
-    }
-
     await action.execute({
-      userId: result.data.userId,
+      userId: input.userId,
       data: {
-        name: result.data.name,
-        email: result.data.email,
-        role: result.data.role,
+        name: input.name,
+        email: input.email,
+        role: input.role,
       },
     });
 
@@ -52,7 +37,6 @@ export function useEditAdminUser() {
   }
 
   return {
-    fieldErrors,
     loading,
     error,
     successMessage,

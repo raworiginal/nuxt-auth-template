@@ -7,8 +7,7 @@ const emit = defineEmits<{
 
 const open = defineModel<boolean>("open", { required: true });
 
-const { fieldErrors, loading, error, successMessage, submit } =
-  useCreateAdminUser();
+const { loading, error, successMessage, submit } = useCreateAdminUser();
 const toast = useToast();
 
 const formKey = ref(0);
@@ -30,7 +29,6 @@ function handleSubmit(input: CreateAdminUserFormData) {
   <AppModal v-model:open="open" title="Create user" :close-disabled="loading">
     <AdminCreateUserForm
       :key="formKey"
-      :field-errors="fieldErrors"
       :loading="loading"
       :error="error"
       @submit="handleSubmit"

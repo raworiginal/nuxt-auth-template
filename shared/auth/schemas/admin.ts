@@ -1,17 +1,11 @@
 import { z } from "zod";
+import { nameSchema, passwordSchema } from "./fields";
 
 export const createAdminUserSchema = z
   .object({
-    name: z
-      .string()
-      .trim()
-      .min(1, "Name is required")
-      .max(100, "Name must be 100 characters or fewer"),
+    name: nameSchema,
     email: z.email("Enter a valid email address"),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .max(128, "Password must be 128 characters or fewer"),
+    password: passwordSchema,
     confirmPassword: z.string(),
     role: z.enum(["user", "admin"]).default("user"),
   })
@@ -23,10 +17,7 @@ export const createAdminUserSchema = z
 export const resetAdminUserPasswordSchema = z
   .object({
     userId: z.string().min(1, "User is required"),
-    newPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .max(128, "Password must be 128 characters or fewer"),
+    newPassword: passwordSchema,
     confirmPassword: z.string(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -36,11 +27,7 @@ export const resetAdminUserPasswordSchema = z
 
 export const editAdminUserSchema = z.object({
   userId: z.string().min(1, "User is required"),
-  name: z
-    .string()
-    .trim()
-    .min(1, "Name is required")
-    .max(100, "Name must be 100 characters or fewer"),
+  name: nameSchema,
   email: z.email("Enter a valid email address"),
   role: z.enum(["user", "admin"]),
 });

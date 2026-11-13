@@ -4,10 +4,8 @@ import {
   listAdminUserProvidersResultSchema,
   listAdminUserProvidersSchema,
 } from "#shared/auth/schemas/admin";
-import { account } from "../../db/schema/auth-schema";
-import getDatabase from "../../utils/database";
-
-const db = getDatabase();
+import { db } from "@nuxthub/db";
+import { account } from "#auth/schema";
 
 export default defineEventHandler(async (event) => {
   setResponseHeader(event as never, "cache-control", "no-store");

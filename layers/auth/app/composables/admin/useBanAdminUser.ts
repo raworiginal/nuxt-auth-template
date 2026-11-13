@@ -1,5 +1,4 @@
 import { getErrorMessage } from "#layers/auth/app/utils/error";
-import { banAdminUserSchema } from "#shared/auth/schemas/admin";
 import type { BanAdminUserInput } from "#shared/auth/types/admin";
 
 const durationMultipliers = {
@@ -11,7 +10,6 @@ const durationMultipliers = {
 
 export function useBanAdminUser() {
   const action = useAuthClientAction((client) => client.admin.banUser);
-  const fieldErrors = ref<Record<string, string>>({});
   const successMessage = ref<string | null>(null);
   const showActionError = ref(false);
   const loading = computed(() => action.status.value === "pending");
@@ -22,7 +20,6 @@ export function useBanAdminUser() {
   );
 
   function clearState() {
-    fieldErrors.value = {};
     successMessage.value = null;
     showActionError.value = false;
   }
@@ -30,18 +27,7 @@ export function useBanAdminUser() {
   async function submit(input: BanAdminUserInput) {
     clearState();
 
-    const result = banAdminUserSchema.safeParse(input);
-    if (!result.success) {
-      for (const issue of result.error.issues) {
-        const field = issue.path[0];
-        if (typeof field === "string" && !fieldErrors.value[field]) {
-          fieldErrors.value[field] = issue.message;
-        }
-      }
-      return;
-    }
-
-    const { userId, banReason, duration, durationUnit } = result.data;
+    const { userId, banReason, duration, durationUnit } = input;
     await action.execute({
       userId,
       ...(banReason ? { banReason } : {}),
@@ -57,7 +43,6 @@ export function useBanAdminUser() {
   }
 
   return {
-    fieldErrors,
     loading,
     error,
     successMessage,

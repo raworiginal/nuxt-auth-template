@@ -5,21 +5,18 @@ import {
 } from "#shared/auth/schemas/admin";
 import type { RevokeAdminUserSessionInput } from "#shared/auth/types/admin";
 
-function getStatusCode(error: unknown) {
-  return typeof error === "object" &&
-    error !== null &&
-    "statusCode" in error &&
-    typeof error.statusCode === "number"
-    ? error.statusCode
-    : undefined;
-}
-
 export function useRevokeAdminUserSession() {
   const requestFetch = useAuthRequestFetch();
+  const action = useAction(async (body: RevokeAdminUserSessionInput) => ({
+    response: await requestFetch("/api/admin/revoke-user-session", {
+      method: "POST",
+      body,
+    }),
+  }));
   const fieldErrors = ref<Record<string, string>>({});
   const error = ref<string | null>(null);
   const successMessage = ref<string | null>(null);
-  const loading = ref(false);
+  const loading = computed(() => action.status.value === "pending");
 
   function clearState() {
     fieldErrors.value = {};
@@ -40,21 +37,10 @@ export function useRevokeAdminUserSession() {
       return false;
     }
 
-    loading.value = true;
-    try {
-      const result = await requestFetch("/api/admin/revoke-user-session", {
-        method: "POST",
-        body: parsed.data,
-      });
-      const response = revokeAdminUserSessionResultSchema.safeParse(result);
-      if (!response.success || !response.data.success) {
-        error.value = "The server returned an invalid revocation response.";
-        return false;
-      }
-      successMessage.value = "Session revoked successfully.";
-      return true;
-    } catch (caughtError: unknown) {
-      const statusCode = getStatusCode(caughtError);
+    await action.execute(parsed.data);
+    if (action.status.value === "error") {
+      const caughtError = action.error.value?.raw;
+      const statusCode = action.error.value?.status;
       if (statusCode === 401) {
         error.value = "Your session has expired. Please sign in again.";
       } else if (statusCode === 403) {
@@ -69,9 +55,18 @@ export function useRevokeAdminUserSession() {
         error.value = getErrorMessage(caughtError);
       }
       return false;
-    } finally {
-      loading.value = false;
     }
+
+    const response = revokeAdminUserSessionResultSchema.safeParse(
+      action.data.value?.response,
+    );
+    if (!response.success || !response.data.success) {
+      error.value = "The server returned an invalid revocation response.";
+      return false;
+    }
+
+    successMessage.value = "Session revoked successfully.";
+    return true;
   }
 
   return { fieldErrors, error, successMessage, loading, clearState, revoke };

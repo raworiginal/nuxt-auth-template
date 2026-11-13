@@ -9,7 +9,6 @@ const props = defineProps<{
   initialValues: EditAdminUserFormData;
   loading: boolean;
   error: string | null;
-  fieldErrors: Record<string, string>;
 }>();
 
 const emit = defineEmits<{
@@ -35,7 +34,7 @@ function handleSubmit(event: FormSubmitEvent<EditAdminUserFormData>) {
     <p v-if="props.error" class="text-error" role="alert">
       {{ props.error }}
     </p>
-    <UFormField label="Name" name="name" :error="props.fieldErrors.name">
+    <UFormField label="Name" name="name">
       <UInput
         id="admin-edit-user-name"
         v-model="form.name"
@@ -45,7 +44,7 @@ function handleSubmit(event: FormSubmitEvent<EditAdminUserFormData>) {
       />
     </UFormField>
 
-    <UFormField label="Email" name="email" :error="props.fieldErrors.email">
+    <UFormField label="Email" name="email">
       <UInput
         id="admin-edit-user-email"
         v-model="form.email"
@@ -56,7 +55,7 @@ function handleSubmit(event: FormSubmitEvent<EditAdminUserFormData>) {
       />
     </UFormField>
 
-    <UFormField label="Role" name="role" :error="props.fieldErrors.role">
+    <UFormField label="Role" name="role">
       <USelect
         id="admin-edit-user-role"
         v-model="form.role"
