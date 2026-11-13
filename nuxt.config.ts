@@ -11,4 +11,5 @@ export default defineNuxtConfig({
     githubClientId: "",
     githubClientSecret: "",
   },
+  css: ["~~/app/assets/css/main.css"],
 });

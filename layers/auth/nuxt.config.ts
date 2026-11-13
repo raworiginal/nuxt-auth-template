@@ -28,7 +28,6 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  css: [join(layerRoot, "app/assets/css/main.css")],
   imports: {
     dirs: [
       join(layerRoot, "app/composables/auth"),
