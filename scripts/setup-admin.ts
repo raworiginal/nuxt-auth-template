@@ -23,6 +23,21 @@ function requiredEnv(name: string): string {
   return value;
 }
 
+function requiredAuthSecret(): string {
+  const secret =
+    process.env.NUXT_BETTER_AUTH_SECRET?.trim() ||
+    process.env.NUXT_APP_SECRET?.trim() ||
+    process.env.BETTER_AUTH_SECRET?.trim();
+
+  if (!secret) {
+    throw new Error(
+      "Set NUXT_BETTER_AUTH_SECRET, NUXT_APP_SECRET, or the legacy BETTER_AUTH_SECRET.",
+    );
+  }
+
+  return secret;
+}
+
 function loadSetupConfig() {
   const email = requiredEnv("ADMIN_EMAIL").toLowerCase();
   const password = process.env.ADMIN_PASSWORD;
@@ -35,7 +50,7 @@ function loadSetupConfig() {
 
   return {
     databaseUrl: requiredEnv("DATABASE_URL"),
-    secret: requiredEnv("BETTER_AUTH_SECRET"),
+    secret: requiredAuthSecret(),
     name: requiredEnv("ADMIN_NAME"),
     email,
     password,
@@ -62,7 +77,7 @@ function runMigrations() {
 async function main() {
   const config = loadSetupConfig();
   if (config.secret.length < 32) {
-    throw new Error("BETTER_AUTH_SECRET must be at least 32 characters long.");
+    throw new Error("The Better Auth secret must be at least 32 characters long.");
   }
 
   console.info("Applying project database migrations...");

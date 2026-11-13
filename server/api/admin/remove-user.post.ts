@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   const removeUser = (auth.api as typeof auth.api & {
     removeUser: (input: {
       body: { userId: string };
-      headers: Record<string, string>;
+      headers: ReturnType<typeof getHeaders>;
     }) => Promise<{ success: boolean }>;
   }).removeUser;
 

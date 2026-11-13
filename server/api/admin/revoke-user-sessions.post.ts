@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   const revokeUserSessions = (auth.api as typeof auth.api & {
     revokeUserSessions: (input: {
       body: { userId: string };
-      headers: Record<string, string>;
+      headers: ReturnType<typeof getHeaders>;
     }) => Promise<{ success: boolean }>;
   }).revokeUserSessions;
 

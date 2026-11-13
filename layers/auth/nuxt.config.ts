@@ -14,15 +14,18 @@ export default defineNuxtConfig({
     redirects: {
       login: "/login",
       guest: "/app",
+      authenticated: "/app",
+      logout: "/login",
+      sessionExpired: "/login",
     },
   },
   routeRules: {
-    "/app/**": { auth: { only: "user", redirectTo: "/login" } },
+    "/app/**": { auth: "user" },
     "/admin/**": {
-      auth: { user: { role: "admin" }, redirectTo: "/app" },
+      auth: { only: "user", user: { role: "admin" }, redirectTo: "/app" },
     },
-    "/login": { auth: { only: "guest", redirectTo: "/app" } },
-    "/register": { auth: { only: "guest", redirectTo: "/app" } },
+    "/login": { auth: "guest" },
+    "/register": { auth: "guest" },
   },
   imports: {
     dirs: [

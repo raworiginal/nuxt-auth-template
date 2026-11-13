@@ -12,7 +12,7 @@ A Nuxt 4 starter project with Better Auth, PostgreSQL/Drizzle, and a local Nuxt 
    cp .env.example .env
    ```
 
-3. Set a strong `BETTER_AUTH_SECRET` (at least 32 characters) and `ADMIN_PASSWORD` (at least 12 characters) in `.env`. The other example values work for local development.
+3. Set a strong `NUXT_BETTER_AUTH_SECRET` (at least 32 characters) and `ADMIN_PASSWORD` (at least 12 characters) in `.env`. `NUXT_APP_SECRET` is also supported by the module; the setup script uses it when the dedicated auth secret is absent. Existing projects can keep using the legacy `BETTER_AUTH_SECRET` name.
 4. Start PostgreSQL and set up the database and initial admin:
 
    ```sh
@@ -62,7 +62,7 @@ Some plugins add database fields or tables. Update `server/db/schema/`, generate
 
 ## Configuration
 
-The app uses PostgreSQL. Configure `DATABASE_URL` and `BETTER_AUTH_SECRET` in the environment. Set `NUXT_PUBLIC_SITE_URL` for production deployments where the public URL cannot be inferred. Social sign-in is optional; set both variables for a provider to enable it:
+The app uses PostgreSQL. Configure `DATABASE_URL` and `NUXT_BETTER_AUTH_SECRET` in the environment. Set `NUXT_PUBLIC_SITE_URL` for production deployments where the public URL cannot be inferred. Social sign-in is optional; set both variables for a provider to enable it:
 
 ```dotenv
 NUXT_GOOGLE_CLIENT_ID=...

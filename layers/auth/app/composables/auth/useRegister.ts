@@ -7,10 +7,7 @@ export function useRegister() {
   const loading = computed(() => action.status.value === "pending");
   const error = computed(() => action.error.value?.message ?? null);
 
-  async function submit(
-    input: RegisterFormData,
-    onSuccess?: () => void | Promise<unknown>,
-  ) {
+  async function submit(input: RegisterFormData) {
     fieldErrors.value = {};
     const result = registerSchema.safeParse(input);
 
@@ -24,18 +21,11 @@ export function useRegister() {
       return;
     }
 
-    await action.execute(
-      {
-        email: result.data.email,
-        name: result.data.name,
-        password: result.data.password,
-      },
-      {
-        onSuccess: async () => {
-          await onSuccess?.();
-        },
-      },
-    );
+    await action.execute({
+      email: result.data.email,
+      name: result.data.name,
+      password: result.data.password,
+    });
   }
 
   return { fieldErrors, loading, error, submit };

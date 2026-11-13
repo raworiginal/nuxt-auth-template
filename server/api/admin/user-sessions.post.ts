@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const listUserSessions = (auth.api as typeof auth.api & {
     listUserSessions: (input: {
       body: { userId: string };
-      headers: Record<string, string>;
+      headers: ReturnType<typeof getHeaders>;
     }) => Promise<{
       sessions: Array<{ id: string; createdAt: Date; expiresAt: Date }>;
     }>;

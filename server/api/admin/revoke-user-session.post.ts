@@ -22,11 +22,11 @@ export default defineEventHandler(async (event) => {
   const authApi = auth.api as typeof auth.api & {
     listUserSessions: (input: {
       body: { userId: string };
-      headers: Record<string, string>;
+      headers: ReturnType<typeof getHeaders>;
     }) => Promise<{ sessions: Array<{ id: string; token: string }> }>;
     revokeUserSession: (input: {
       body: { sessionToken: string };
-      headers: Record<string, string>;
+      headers: ReturnType<typeof getHeaders>;
     }) => Promise<{ success: boolean }>;
   };
 

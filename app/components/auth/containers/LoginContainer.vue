@@ -16,11 +16,6 @@ function handleSocialSignIn(provider: SocialProvider) {
   return signInSocial(provider, "/app");
 }
 
-function handleSubmit(input: Parameters<typeof submit>[0]) {
-  return submit(input, async () => {
-    await navigateTo("/app");
-  });
-}
 </script>
 
 <template>
@@ -31,7 +26,7 @@ function handleSubmit(input: Parameters<typeof submit>[0]) {
     :social-providers="socialProviders"
     :social-loading="socialLoading"
     :social-error="socialError"
-    @submit="handleSubmit"
+    @submit="submit"
     @social-sign-in="handleSocialSignIn"
   />
 </template>

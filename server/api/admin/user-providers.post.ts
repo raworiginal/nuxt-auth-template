@@ -1,4 +1,4 @@
-import { getHeaders, readBody, setResponseHeader } from "h3";
+import { readBody, setResponseHeader } from "h3";
 import { inArray } from "drizzle-orm";
 import {
   listAdminUserProvidersResultSchema,
@@ -22,27 +22,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const auth = serverAuth();
-  const session = await auth.api.getSession({
-    headers: getHeaders(event as never),
-  });
-
-  if (!session) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "You must be signed in to view user providers.",
-    });
-  }
-
-  const sessionUser = session.user as typeof session.user & {
-    role?: string | null;
-  };
-  if (sessionUser.role !== "admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "You are not authorized to view user providers.",
-    });
-  }
+  await requireUserSession(event, { user: { role: "admin" } });
 
   const userIds = [...new Set(parsed.data.userIds)];
   const providersByUserId = Object.fromEntries(

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { loggedIn, user } = useUserSession();
+const { ready, loggedIn, user } = useUserSession();
 const { loading: logoutLoading, submit: logout } = useLogout();
 </script>
 
@@ -17,12 +17,12 @@ const { loading: logoutLoading, submit: logout } = useLogout();
       </UButton>
     </template>
 
-    <NavMenu :logged-in="loggedIn" horizontal />
+    <NavMenu v-if="ready" :logged-in="loggedIn" horizontal />
 
     <template #right>
       <UColorModeButton />
       <NavUserMenu
-        v-if="loggedIn"
+        v-if="ready && loggedIn"
         :user="user"
         :logout-loading="logoutLoading"
         @logout="logout"
@@ -30,7 +30,7 @@ const { loading: logoutLoading, submit: logout } = useLogout();
     </template>
 
     <template #body>
-      <NavMenu :logged-in="loggedIn" />
+      <NavMenu v-if="ready" :logged-in="loggedIn" />
     </template>
   </UHeader>
 </template>

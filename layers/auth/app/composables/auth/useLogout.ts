@@ -4,11 +4,7 @@ export function useLogout() {
   const error = computed(() => action.error.value?.message ?? null);
 
   async function submit() {
-    await action.execute({
-      onSuccess: async () => {
-        await navigateTo("/login");
-      },
-    });
+    await action.execute();
   }
 
   return { loading, error, submit };

@@ -7,10 +7,7 @@ export function useLogin() {
   const loading = computed(() => action.status.value === "pending");
   const error = computed(() => action.error.value?.message ?? null);
 
-  async function submit(
-    input: LoginFormData,
-    onSuccess?: () => void | Promise<unknown>,
-  ) {
+  async function submit(input: LoginFormData) {
     fieldErrors.value = {};
     const result = loginSchema.safeParse(input);
 
@@ -24,11 +21,7 @@ export function useLogin() {
       return;
     }
 
-    await action.execute(result.data, {
-      onSuccess: async () => {
-        await onSuccess?.();
-      },
-    });
+    await action.execute(result.data);
   }
 
   return { fieldErrors, loading, error, submit };

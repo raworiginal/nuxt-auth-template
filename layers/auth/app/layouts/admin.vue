@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DropdownMenuItem, NavigationMenuItem } from "@nuxt/ui";
 
-const { loggedIn, user } = useUserSession();
+const { ready, loggedIn, user } = useUserSession();
 const { loading: logoutLoading, submit: logout } = useLogout();
 
 const navigationItems = computed<NavigationMenuItem[]>(() => [
@@ -57,7 +57,11 @@ const accountItems = computed<DropdownMenuItem[][]>(() => [
       </template>
 
       <template #footer="{ collapsed }">
-        <UDropdownMenu :items="accountItems" :content="{ align: 'end' }">
+        <UDropdownMenu
+          v-if="ready"
+          :items="accountItems"
+          :content="{ align: 'end' }"
+        >
           <UButton
             color="neutral"
             variant="ghost"
