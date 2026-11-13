@@ -6,20 +6,14 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  removed: [];
+  close: [removed: boolean];
 }>();
 
-const open = defineModel<boolean>("open", { required: true });
 const { fieldErrors, loading, error, clearState, remove } =
   useRemoveAdminUser();
 const toast = useToast();
 
 const title = "Remove user";
-
-watch(open, (isOpen) => {
-  if (isOpen) clearState();
-  else clearState();
-});
 
 watch(
   () => props.user?.id,
@@ -32,31 +26,55 @@ async function handleConfirm() {
   const removed = await remove({ userId: props.user.id });
   if (removed) {
     toast.add({ title: "User removed successfully.", color: "success" });
-    emit("removed");
-    open.value = false;
+    emit("close", true);
   }
 }
 </script>
 
 <template>
-  <AppModal v-model:open="open" :title="title" :close-disabled="loading">
-    <div v-if="props.user">
-      <p>Remove this user?</p>
-      <p class="mt-2">This action cannot be undone.</p>
+  <UModal
+    :title="title"
+    :close="loading ? false : { onClick: () => emit('close', false) }"
+    :dismissible="!loading"
+  >
+    <template #body>
+      <div v-if="props.user">
+        <p>
+          Remove <span class="font-semibold">{{ props.user.name }}</span>?
+        </p>
+        <p class="mt-2 text-sm text-muted">This action cannot be undone.</p>
 
-      <p v-if="error" class="text-error mt-2" role="alert">{{ error }}</p>
-      <p v-if="fieldErrors.userId" class="text-error mt-2" role="alert">
-        {{ fieldErrors.userId }}
-      </p>
+        <UAlert
+          v-if="error || fieldErrors.userId"
+          class="mt-4"
+          color="error"
+          variant="subtle"
+          icon="i-lucide-circle-alert"
+          title="Unable to remove user"
+          :description="error ?? fieldErrors.userId"
+          role="alert"
+        />
+      </div>
+    </template>
+
+    <template #footer>
       <UButton
-        class="mt-4"
+        color="neutral"
+        variant="outline"
+        :disabled="loading"
+        @click="emit('close', false)"
+      >
+        Cancel
+      </UButton>
+      <UButton
         color="error"
-        type="button"
+        icon="i-lucide-trash-2"
         :loading="loading"
+        :disabled="!props.user"
         @click="handleConfirm"
       >
         {{ loading ? "Removing..." : "Remove user" }}
       </UButton>
-    </div>
-  </AppModal>
+    </template>
+  </UModal>
 </template>
