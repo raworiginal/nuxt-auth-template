@@ -5,7 +5,12 @@ const { loggedIn, user } = useUserSession();
 <template>
   <UHeader>
     <template #title>
-      <UButton to="/" color="neutral" variant="ghost" class="text-xl font-semibold">
+      <UButton
+        to="/"
+        color="neutral"
+        variant="ghost"
+        class="text-xl font-semibold"
+      >
         AppName
       </UButton>
     </template>

@@ -1,6 +1,6 @@
 <template>
   <NavBarContainer />
-  <div class="flex justify-center-safe">
+  <UMain class="flex justify-center-safe">
     <slot />
-  </div>
+  </UMain>
 </template>

@@ -1,18 +1,9 @@
 <script setup lang="ts">
-import type {
-  LoginFormData,
-  SocialProvider,
-} from "#shared/auth/types/auth";
+import type { AuthFormField, ButtonProps } from "@nuxt/ui";
+import type { LoginFormData, SocialProvider } from "#shared/auth/types/auth";
 import { loginSchema } from "#shared/auth/schemas/auth";
 
-const {
-  loading,
-  error: authError,
-  fieldErrors,
-  socialProviders,
-  socialLoading,
-  socialError,
-} = defineProps<{
+const props = defineProps<{
   loading: boolean;
   error: string | null;
   fieldErrors: Record<string, string>;
@@ -26,68 +17,80 @@ const emit = defineEmits<{
   socialSignIn: [provider: SocialProvider];
 }>();
 
-const form = reactive<LoginFormData>({
-  email: "",
-  password: "",
-});
+const fields = computed<AuthFormField[]>(() => [
+  {
+    name: "email",
+    type: "email",
+    label: "Email",
+    placeholder: "Email",
+    autocomplete: "email",
+    defaultValue: "",
+    required: true,
+    error: props.fieldErrors.email,
+  },
+  {
+    name: "password",
+    type: "password",
+    label: "Password",
+    placeholder: "Password",
+    autocomplete: "current-password",
+    defaultValue: "",
+    required: true,
+    error: props.fieldErrors.password,
+  },
+]);
+
+const providers = computed<ButtonProps[]>(() =>
+  props.socialProviders.map((provider) => ({
+    label: props.socialLoading
+      ? "Connecting…"
+      : `Continue with ${provider === "google" ? "Google" : "GitHub"}`,
+    color: "neutral",
+    variant: "outline",
+    disabled: props.loading || props.socialLoading,
+    loading: props.socialLoading,
+    onClick: () => emit("socialSignIn", provider),
+  })),
+);
 
 function handleSubmit(event: { data: LoginFormData }) {
   emit("submit", { ...event.data });
 }
-
-function getProviderLabel(provider: SocialProvider) {
-  return provider === "google" ? "Google" : "GitHub";
-}
 </script>
 
 <template>
-  <UForm :schema="loginSchema" :state="form" @submit="handleSubmit">
-    <Fieldset :disabled="loading || socialLoading" title="Login">
-      <p v-if="authError" class="text-error mt-2" role="alert">
-        {{ authError }}
-      </p>
-      <UFormField label="Email" name="email" :error="fieldErrors.email">
-        <UInput
-          v-model="form.email"
-          name="email"
-          type="email"
-          placeholder="Email"
-          autocomplete="email"
-          required
-          class="w-full"
-        />
-      </UFormField>
-
-      <PasswordField
-        v-model:password="form.password"
-        :error="fieldErrors.password"
-        autocomplete="current-password"
-      />
-
-      <UButton class="mt-4" type="submit">Login</UButton>
-
-      <template v-if="socialProviders.length > 0">
-        <div class="flex items-center gap-3 text-sm text-muted">
-          <span class="flex-1 border-t border-default"></span>
-          <span>or continue with</span>
-          <span class="flex-1 border-t border-default"></span>
-        </div>
-        <p v-if="socialError" class="text-error text-sm" role="alert">
-          {{ socialError }}
-        </p>
-        <UButton
-          v-for="provider in socialProviders"
-          :key="provider"
-          type="button"
-          class="mt-2"
-          color="neutral"
-          variant="outline"
-          :disabled="loading || socialLoading"
-          @click="emit('socialSignIn', provider)"
+  <UPageCard>
+    <UAuthForm
+      title="Login"
+      :fields="fields"
+      :providers="providers"
+      :schema="loginSchema"
+      separator="or continue with"
+      :disabled="loading || socialLoading"
+      :loading="loading"
+      :submit="{ label: loading ? 'Signing in…' : 'Login', block: true }"
+      @submit="handleSubmit"
+    >
+      <template #validation>
+        <div
+          v-if="props.error || props.socialError"
+          class="space-y-2"
+          role="alert"
         >
-          {{ socialLoading ? "Connecting…" : `Continue with ${getProviderLabel(provider)}` }}
-        </UButton>
+          <UAlert
+            v-if="props.error"
+            color="error"
+            variant="subtle"
+            :description="props.error"
+          />
+          <UAlert
+            v-if="props.socialError"
+            color="error"
+            variant="subtle"
+            :description="props.socialError"
+          />
+        </div>
       </template>
-    </Fieldset>
-  </UForm>
+    </UAuthForm>
+  </UPageCard>
 </template>
