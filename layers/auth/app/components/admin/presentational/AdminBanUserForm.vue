@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { BanAdminUserFormData } from "#shared/auth/types/admin";
 import { banAdminUserSchema } from "#shared/auth/schemas/admin";
+import type { FormSubmitEvent } from "@nuxt/ui";
 
 const formSchema = banAdminUserSchema.omit({ userId: true });
 
@@ -20,62 +21,62 @@ const form = reactive<BanAdminUserFormData>({
   durationUnit: "days",
 });
 
-function handleSubmit(event: { data: BanAdminUserFormData }) {
+function handleSubmit(event: FormSubmitEvent<BanAdminUserFormData>) {
   emit("submit", { ...event.data });
 }
 </script>
 
 <template>
-  <UForm :schema="formSchema" :state="form" @submit="handleSubmit">
-    <Fieldset :disabled="props.loading" title="Ban user">
-      <p v-if="props.error" class="text-error mt-2" role="alert">
-        {{ props.error }}
-      </p>
-      <UFormField
-        label="Reason"
+  <UForm
+    id="admin-ban-user-form"
+    :schema="formSchema"
+    :state="form"
+    :disabled="props.loading"
+    class="space-y-4"
+    @submit="handleSubmit"
+  >
+    <p v-if="props.error" class="text-error" role="alert">
+      {{ props.error }}
+    </p>
+    <UFormField label="Reason" name="banReason" :error="props.fieldErrors.banReason">
+      <UTextarea
+        id="admin-ban-user-reason"
+        v-model="form.banReason"
         name="banReason"
-        :error="props.fieldErrors.banReason"
-      >
-        <UTextarea
-          id="admin-ban-user-reason"
-          v-model="form.banReason"
-          name="banReason"
-          :rows="3"
-          class="w-full"
-        />
-      </UFormField>
+        :rows="3"
+        class="w-full"
+      />
+    </UFormField>
 
+    <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
       <UFormField
         label="Duration (leave blank for permanent)"
         name="duration"
         :error="props.fieldErrors.duration"
       >
-        <div class="flex gap-2">
-          <UInput
-            id="admin-ban-user-duration"
-            v-model.number="form.duration"
-            class="w-full"
-            name="duration"
-            type="number"
-            min="0"
-            step="any"
-          />
-          <USelect
-            v-model="form.durationUnit"
-            name="durationUnit"
-            :items="[
-              { label: 'Seconds', value: 'seconds' },
-              { label: 'Minutes', value: 'minutes' },
-              { label: 'Hours', value: 'hours' },
-              { label: 'Days', value: 'days' },
-            ]"
-          />
-        </div>
+        <UInput
+          id="admin-ban-user-duration"
+          v-model.number="form.duration"
+          class="w-full"
+          name="duration"
+          type="number"
+          min="0"
+          step="any"
+        />
       </UFormField>
-
-      <UButton class="mt-4" type="submit" :loading="props.loading">
-        {{ props.loading ? "Banning..." : "Ban user" }}
-      </UButton>
-    </Fieldset>
+      <UFormField label="Unit" name="durationUnit" :error="props.fieldErrors.durationUnit">
+        <USelect
+          id="admin-ban-user-duration-unit"
+          v-model="form.durationUnit"
+          name="durationUnit"
+          :items="[
+            { label: 'Seconds', value: 'seconds' },
+            { label: 'Minutes', value: 'minutes' },
+            { label: 'Hours', value: 'hours' },
+            { label: 'Days', value: 'days' },
+          ]"
+        />
+      </UFormField>
+    </div>
   </UForm>
 </template>

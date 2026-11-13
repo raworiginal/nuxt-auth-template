@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ChangePasswordFormData } from "#shared/auth/types/auth";
 import { passwordChangeSchema } from "#shared/auth/schemas/auth";
+import type { FormSubmitEvent } from "@nuxt/ui";
 
 const {
   loading,
@@ -22,14 +23,14 @@ const form = reactive<ChangePasswordFormData>({
   confirmPassword: "",
 });
 
-function handleSubmit(event: { data: ChangePasswordFormData }) {
+function handleSubmit(event: FormSubmitEvent<ChangePasswordFormData>) {
   emit("submit", { ...event.data });
 }
 </script>
 
 <template>
-  <UForm :schema="passwordChangeSchema" :state="form" @submit="handleSubmit">
-    <Fieldset :disabled="loading" title="Change Password">
+  <UForm :schema="passwordChangeSchema" :state="form" :disabled="loading" @submit="handleSubmit">
+    <Fieldset title="Change Password">
       <p v-if="authError" class="text-error mt-2" role="alert">
         {{ authError }}
       </p>

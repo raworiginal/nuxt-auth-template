@@ -66,8 +66,8 @@ function formatDate(value: string) {
         >
           Revoke all sessions
         </UButton>
-        <div v-else class="rounded border border-error p-3" role="alertdialog" aria-label="Confirm revoke all sessions">
-          <p>Revoke all sessions for this user?</p>
+        <div v-else class="rounded border border-error p-3" role="group" aria-labelledby="revoke-all-confirmation">
+          <p id="revoke-all-confirmation">Revoke all sessions for this user?</p>
           <UButton color="error" variant="soft" size="sm" class="mt-2" type="button" :loading="actionLoading" @click="emit('revokeAll')">
             {{ actionLoading ? "Revoking..." : "Yes, revoke all" }}
           </UButton>
@@ -104,8 +104,8 @@ function formatDate(value: string) {
             >
               Revoke
             </UButton>
-            <div v-else class="rounded border border-error p-3" role="alertdialog" aria-label="Confirm revoke session">
-              <p>Revoke this session?</p>
+            <div v-else class="rounded border border-error p-3" role="group" :aria-labelledby="`revoke-session-confirmation-${session.id}`">
+              <p :id="`revoke-session-confirmation-${session.id}`">Revoke this session?</p>
               <UButton color="error" variant="soft" size="sm" class="mt-2" type="button" :loading="actionLoading" @click="emit('revokeSession', session.id)">
                 {{ actionLoading ? "Revoking..." : "Yes, revoke" }}
               </UButton>

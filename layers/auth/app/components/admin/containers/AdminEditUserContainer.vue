@@ -78,5 +78,13 @@ function handleSubmit(input: EditAdminUserFormData) {
       :error="error"
       @submit="handleSubmit"
     />
+    <template #footer="{ close }">
+      <UButton color="neutral" variant="outline" :disabled="loading" @click="close">
+        Cancel
+      </UButton>
+      <UButton type="submit" form="admin-edit-user-form" :loading="loading">
+        {{ loading ? "Saving..." : "Save changes" }}
+      </UButton>
+    </template>
   </AppModal>
 </template>

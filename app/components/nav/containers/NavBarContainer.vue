@@ -4,12 +4,13 @@ const { loggedIn, user } = useUserSession();
 
 <template>
   <UHeader>
-    <template #title>
+    <template #left>
       <UButton
         to="/"
         color="neutral"
         variant="ghost"
         class="text-xl font-semibold"
+        aria-label="AppName home"
       >
         AppName
       </UButton>

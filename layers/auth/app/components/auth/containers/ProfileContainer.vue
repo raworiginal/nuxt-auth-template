@@ -27,7 +27,7 @@ watch(passwordSuccessMessage, (message) => {
 </script>
 
 <template>
-  <main v-if="user" class="flex flex-col gap-4 p-4">
+  <div v-if="user" class="flex flex-col gap-4 p-4">
     <ProfileForm
       :user="{ name: user.name, image: user.image ?? '' }"
       :field-errors="profileFieldErrors"
@@ -41,5 +41,5 @@ watch(passwordSuccessMessage, (message) => {
       :error="passwordError"
       @submit="submitPassword"
     />
-  </main>
+  </div>
 </template>

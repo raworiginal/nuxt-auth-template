@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AuthFormField, ButtonProps } from "@nuxt/ui";
+import type { AuthFormField, ButtonProps, FormSubmitEvent } from "@nuxt/ui";
 import type { LoginFormData, SocialProvider } from "#shared/auth/types/auth";
 import { loginSchema } from "#shared/auth/schemas/auth";
 
@@ -53,7 +53,7 @@ const providers = computed<ButtonProps[]>(() =>
   })),
 );
 
-function handleSubmit(event: { data: LoginFormData }) {
+function handleSubmit(event: FormSubmitEvent<LoginFormData>) {
   emit("submit", { ...event.data });
 }
 </script>

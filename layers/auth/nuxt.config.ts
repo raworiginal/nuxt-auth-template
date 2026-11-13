@@ -1,4 +1,3 @@
-import tailwindcss from "@tailwindcss/vite";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineNuxtConfig } from "nuxt/config";
@@ -24,9 +23,6 @@ export default defineNuxtConfig({
     },
     "/login": { auth: { only: "guest", redirectTo: "/app" } },
     "/register": { auth: { only: "guest", redirectTo: "/app" } },
-  },
-  vite: {
-    plugins: [tailwindcss()],
   },
   imports: {
     dirs: [

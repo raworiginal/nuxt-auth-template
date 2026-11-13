@@ -54,5 +54,18 @@ function handleSubmit(input: BanAdminUserFormData) {
       :error="error"
       @submit="handleSubmit"
     />
+    <template #footer="{ close }">
+      <UButton color="neutral" variant="outline" :disabled="loading" @click="close">
+        Cancel
+      </UButton>
+      <UButton
+        type="submit"
+        form="admin-ban-user-form"
+        color="error"
+        :loading="loading"
+      >
+        {{ loading ? "Banning..." : "Ban user" }}
+      </UButton>
+    </template>
   </AppModal>
 </template>

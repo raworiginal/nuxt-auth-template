@@ -63,5 +63,13 @@ function handleSubmit(input: ResetAdminUserPasswordFormData) {
       :error="error"
       @submit="handleSubmit"
     />
+    <template #footer="{ close }">
+      <UButton color="neutral" variant="outline" :disabled="loading" @click="close">
+        Cancel
+      </UButton>
+      <UButton type="submit" form="admin-reset-password-form" :loading="loading">
+        {{ loading ? "Resetting..." : "Reset password" }}
+      </UButton>
+    </template>
   </AppModal>
 </template>

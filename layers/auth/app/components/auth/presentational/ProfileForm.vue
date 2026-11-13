@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ProfileFormData } from "#shared/auth/types/auth";
 import { profileSchema } from "#shared/auth/schemas/auth";
+import type { FormSubmitEvent } from "@nuxt/ui";
 
 const {
   user,
@@ -29,14 +30,14 @@ const profileImage = computed({
   },
 });
 
-function handleSubmit(event: { data: ProfileFormData }) {
+function handleSubmit(event: FormSubmitEvent<ProfileFormData>) {
   emit("submit", { ...event.data });
 }
 </script>
 
 <template>
-  <UForm :schema="profileSchema" :state="form" @submit="handleSubmit">
-    <Fieldset :disabled="loading" title="Edit Profile">
+  <UForm :schema="profileSchema" :state="form" :disabled="loading" @submit="handleSubmit">
+    <Fieldset title="Edit Profile">
       <p v-if="authError" class="text-error mt-2" role="alert">
         {{ authError }}
       </p>

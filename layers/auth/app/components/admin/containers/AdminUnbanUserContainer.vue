@@ -50,14 +50,14 @@ function handleConfirm() {
       <p v-if="fieldErrors.userId" class="text-error mt-2" role="alert">
         {{ fieldErrors.userId }}
       </p>
-      <UButton
-        class="mt-4"
-        type="button"
-        :loading="loading"
-        @click="handleConfirm"
-      >
+    </div>
+    <template #footer="{ close }">
+      <UButton color="neutral" variant="outline" :disabled="loading" @click="close">
+        Cancel
+      </UButton>
+      <UButton type="button" :loading="loading" @click="handleConfirm">
         {{ loading ? "Unbanning..." : "Unban user" }}
       </UButton>
-    </div>
+    </template>
   </AppModal>
 </template>

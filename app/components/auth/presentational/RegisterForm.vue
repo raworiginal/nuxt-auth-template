@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AuthFormField } from "@nuxt/ui";
+import type { AuthFormField, FormSubmitEvent } from "@nuxt/ui";
 import type { RegisterFormData } from "#shared/auth/types/auth";
 import { registerSchema } from "#shared/auth/schemas/auth";
 
@@ -56,13 +56,13 @@ const fields = computed<AuthFormField[]>(() => [
   },
 ]);
 
-function handleSubmit(event: { data: RegisterFormData }) {
+function handleSubmit(event: FormSubmitEvent<RegisterFormData>) {
   emit("submit", { ...event.data });
 }
 </script>
 
 <template>
-  <UCard>
+  <UPageCard>
     <UAuthForm
       title="Register"
       :fields="fields"
@@ -82,5 +82,5 @@ function handleSubmit(event: { data: RegisterFormData }) {
         />
       </template>
     </UAuthForm>
-  </UCard>
+  </UPageCard>
 </template>

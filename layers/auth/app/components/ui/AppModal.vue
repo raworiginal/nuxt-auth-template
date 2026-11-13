@@ -28,8 +28,11 @@ const modalOpen = computed({
     :close="!props.closeDisabled"
     :dismissible="!props.closeDisabled"
   >
-    <template #body>
-      <slot />
+    <template #body="{ close }">
+      <slot :close="close" />
+    </template>
+    <template v-if="$slots.footer" #footer="{ close }">
+      <slot name="footer" :close="close" />
     </template>
   </UModal>
 </template>

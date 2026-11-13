@@ -35,5 +35,13 @@ function handleSubmit(input: CreateAdminUserFormData) {
       :error="error"
       @submit="handleSubmit"
     />
+    <template #footer="{ close }">
+      <UButton color="neutral" variant="outline" :disabled="loading" @click="close">
+        Cancel
+      </UButton>
+      <UButton type="submit" form="admin-create-user-form" :loading="loading">
+        {{ loading ? "Creating..." : "Create user" }}
+      </UButton>
+    </template>
   </AppModal>
 </template>
