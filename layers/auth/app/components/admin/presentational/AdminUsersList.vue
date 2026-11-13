@@ -190,25 +190,13 @@ function formatProvider(provider: string) {
         @update:model-value="emit('pageSizeChange', Number($event))"
       />
     </div>
-    <div class="grid grid-cols-2 gap-2 sm:flex sm:items-center">
-      <UButton
-        color="neutral"
-        variant="outline"
-        size="sm"
-        :disabled="!offset"
-        @click="emit('pageChange', Math.max(0, (offset ?? 0) - (limit ?? 1)))"
-      >
-        Previous
-      </UButton>
-      <UButton
-        color="neutral"
-        variant="outline"
-        size="sm"
-        :disabled="(offset ?? 0) + (limit ?? 0) >= total"
-        @click="emit('pageChange', (offset ?? 0) + (limit ?? 1))"
-      >
-        Next
-      </UButton>
-    </div>
+    <UPagination
+      v-if="total > 0"
+      :page="Math.floor((offset ?? 0) / (limit ?? 1)) + 1"
+      :items-per-page="limit ?? 1"
+      :total="total"
+      size="sm"
+      @update:page="emit('pageChange', ($event - 1) * (limit ?? 1))"
+    />
   </div>
 </template>

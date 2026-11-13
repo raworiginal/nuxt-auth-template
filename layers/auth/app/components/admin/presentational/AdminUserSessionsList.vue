@@ -9,7 +9,6 @@ defineProps<{
   successMessage: string | null;
   fieldErrors: Record<string, string>;
   actionError: string | null;
-  actionSuccessMessage: string | null;
   actionLoading: boolean;
   confirmingSessionId: string | null;
   confirmingAll: boolean;
@@ -42,9 +41,6 @@ function formatDate(value: string) {
     </p>
     <p v-else-if="error" class="mt-4 text-error" role="alert">{{ error }}</p>
     <template v-else-if="sessions.length === 0">
-      <p v-if="actionSuccessMessage" class="mt-4 text-success" role="status">
-        {{ actionSuccessMessage }}
-      </p>
       <p v-if="actionError" class="mt-4 text-error" role="alert">
         {{ actionError }}
       </p>
@@ -53,9 +49,6 @@ function formatDate(value: string) {
     <template v-else>
       <p v-if="successMessage" class="mt-4 text-success" role="status">
         {{ successMessage }}
-      </p>
-      <p v-if="actionSuccessMessage" class="mt-4 text-success" role="status">
-        {{ actionSuccessMessage }}
       </p>
       <p v-if="actionError" class="mt-4 text-error" role="alert">
         {{ actionError }}

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RegisterFormData } from "#shared/auth/types/auth";
+import { registerSchema } from "#shared/auth/schemas/auth";
 
 const {
   loading,
@@ -22,13 +23,13 @@ const form = reactive<RegisterFormData>({
   confirmPassword: "",
 });
 
-function handleSubmit() {
-  emit("submit", { ...form });
+function handleSubmit(event: { data: RegisterFormData }) {
+  emit("submit", { ...event.data });
 }
 </script>
 
 <template>
-  <form novalidate @submit.prevent="handleSubmit">
+  <UForm :schema="registerSchema" :state="form" @submit="handleSubmit">
     <Fieldset :disabled="loading" title="Register">
       <p v-if="authError" class="text-error mt-2" role="alert">
         {{ authError }}
@@ -56,5 +57,5 @@ function handleSubmit() {
         {{ loading ? "Registering..." : "Register" }}
       </UButton>
     </Fieldset>
-  </form>
+  </UForm>
 </template>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { CreateAdminUserFormData } from "#shared/auth/types/admin";
+import { createAdminUserSchema } from "#shared/auth/schemas/admin";
 
 const props = defineProps<{
   loading: boolean;
   error: string | null;
-  successMessage: string | null;
   fieldErrors: Record<string, string>;
 }>();
 
@@ -20,21 +20,17 @@ const form = reactive<CreateAdminUserFormData>({
   role: "user",
 });
 
-function handleSubmit() {
-  emit("submit", { ...form });
+function handleSubmit(event: { data: CreateAdminUserFormData }) {
+  emit("submit", { ...event.data });
 }
 </script>
 
 <template>
-  <form novalidate @submit.prevent="handleSubmit">
+  <UForm :schema="createAdminUserSchema" :state="form" @submit="handleSubmit">
     <Fieldset :disabled="props.loading" title="Create user">
       <p v-if="props.error" class="text-error mt-2" role="alert">
         {{ props.error }}
       </p>
-      <p v-if="props.successMessage" class="text-success mt-2" role="status">
-        {{ props.successMessage }}
-      </p>
-
       <UFormField
         label="Name"
         name="name"
@@ -96,5 +92,5 @@ function handleSubmit() {
         {{ props.loading ? "Creating..." : "Create user" }}
       </UButton>
     </Fieldset>
-  </form>
+  </UForm>
 </template>

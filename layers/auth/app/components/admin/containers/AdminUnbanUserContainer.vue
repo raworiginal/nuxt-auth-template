@@ -18,6 +18,7 @@ const {
   clearState,
   submit,
 } = useUnbanAdminUser();
+const toast = useToast();
 
 const title = computed(() =>
   props.user ? `Unban ${props.user.name}` : "Unban user",
@@ -28,7 +29,9 @@ watch(open, (isOpen) => {
 });
 
 watch(successMessage, (message) => {
-  if (message) emit("unbanned");
+  if (!message) return;
+  toast.add({ title: message, color: "success" });
+  emit("unbanned");
 });
 
 function handleConfirm() {
@@ -46,9 +49,6 @@ function handleConfirm() {
       <p v-if="error" class="text-error mt-2" role="alert">{{ error }}</p>
       <p v-if="fieldErrors.userId" class="text-error mt-2" role="alert">
         {{ fieldErrors.userId }}
-      </p>
-      <p v-if="successMessage" class="text-success mt-2" role="status">
-        {{ successMessage }}
       </p>
       <UButton
         class="mt-4"

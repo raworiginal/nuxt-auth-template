@@ -25,13 +25,19 @@ const actionLoading = computed(
 const actionError = computed(
   () => revokeSession.error.value || revokeAllSessions.error.value,
 );
-const actionSuccessMessage = computed(
-  () => revokeSession.successMessage.value || revokeAllSessions.successMessage.value,
-);
 const actionFieldErrors = computed(() => ({
   ...revokeSession.fieldErrors.value,
   ...revokeAllSessions.fieldErrors.value,
 }));
+const toast = useToast();
+
+watch(revokeSession.successMessage, (message) => {
+  if (message) toast.add({ title: message, color: "success" });
+});
+
+watch(revokeAllSessions.successMessage, (message) => {
+  if (message) toast.add({ title: message, color: "success" });
+});
 
 const title = computed(() =>
   props.user ? `Sessions for ${props.user.name}` : "User sessions",
@@ -103,7 +109,6 @@ watch(
       :success-message="successMessage"
       :field-errors="{ ...fieldErrors, ...actionFieldErrors }"
       :action-error="actionError"
-      :action-success-message="actionSuccessMessage"
       :action-loading="actionLoading"
       :confirming-session-id="confirmingSessionId"
       :confirming-all="confirmingAll"

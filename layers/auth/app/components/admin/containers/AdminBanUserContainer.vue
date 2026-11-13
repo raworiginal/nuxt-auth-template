@@ -19,6 +19,7 @@ const {
   clearState,
   submit,
 } = useBanAdminUser();
+const toast = useToast();
 
 const title = computed(() =>
   props.user ? `Ban ${props.user.name}` : "Ban user",
@@ -32,7 +33,9 @@ watch(open, (isOpen) => {
 });
 
 watch(successMessage, (message) => {
-  if (message) emit("banned");
+  if (!message) return;
+  toast.add({ title: message, color: "success" });
+  emit("banned");
 });
 
 function handleSubmit(input: BanAdminUserFormData) {
@@ -49,7 +52,6 @@ function handleSubmit(input: BanAdminUserFormData) {
       :field-errors="fieldErrors"
       :loading="loading"
       :error="error"
-      :success-message="successMessage"
       @submit="handleSubmit"
     />
   </AppModal>

@@ -10,8 +10,9 @@ const emit = defineEmits<{
 }>();
 
 const open = defineModel<boolean>("open", { required: true });
-const { fieldErrors, loading, error, successMessage, clearState, remove } =
+const { fieldErrors, loading, error, clearState, remove } =
   useRemoveAdminUser();
+const toast = useToast();
 
 const title = "Remove user";
 
@@ -30,6 +31,7 @@ async function handleConfirm() {
 
   const removed = await remove({ userId: props.user.id });
   if (removed) {
+    toast.add({ title: "User removed successfully.", color: "success" });
     emit("removed");
     open.value = false;
   }
@@ -46,10 +48,6 @@ async function handleConfirm() {
       <p v-if="fieldErrors.userId" class="text-error mt-2" role="alert">
         {{ fieldErrors.userId }}
       </p>
-      <p v-if="successMessage" class="text-success mt-2" role="status">
-        {{ successMessage }}
-      </p>
-
       <UButton
         class="mt-4"
         color="error"

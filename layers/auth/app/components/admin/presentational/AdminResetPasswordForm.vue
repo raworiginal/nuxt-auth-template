@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { ResetAdminUserPasswordFormData } from "#shared/auth/types/admin";
+import { resetAdminUserPasswordSchema } from "#shared/auth/schemas/admin";
+
+const formSchema = resetAdminUserPasswordSchema.omit({ userId: true });
 
 const props = defineProps<{
   loading: boolean;
   error: string | null;
-  successMessage: string | null;
   fieldErrors: Record<string, string>;
 }>();
 
@@ -17,21 +19,17 @@ const form = reactive<ResetAdminUserPasswordFormData>({
   confirmPassword: "",
 });
 
-function handleSubmit() {
-  emit("submit", { ...form });
+function handleSubmit(event: { data: ResetAdminUserPasswordFormData }) {
+  emit("submit", { ...event.data });
 }
 </script>
 
 <template>
-  <form novalidate @submit.prevent="handleSubmit">
+  <UForm :schema="formSchema" :state="form" @submit="handleSubmit">
     <Fieldset :disabled="props.loading" title="Reset password">
       <p v-if="props.error" class="text-error mt-2" role="alert">
         {{ props.error }}
       </p>
-      <p v-if="props.successMessage" class="text-success mt-2" role="status">
-        {{ props.successMessage }}
-      </p>
-
       <PasswordField
         v-model:password="form.newPassword"
         :error="props.fieldErrors.newPassword"
@@ -51,5 +49,5 @@ function handleSubmit() {
         {{ props.loading ? "Resetting..." : "Reset password" }}
       </UButton>
     </Fieldset>
-  </form>
+  </UForm>
 </template>

@@ -3,6 +3,7 @@ import type {
   LoginFormData,
   SocialProvider,
 } from "#shared/auth/types/auth";
+import { loginSchema } from "#shared/auth/schemas/auth";
 
 const {
   loading,
@@ -30,8 +31,8 @@ const form = reactive<LoginFormData>({
   password: "",
 });
 
-function handleSubmit() {
-  emit("submit", { ...form });
+function handleSubmit(event: { data: LoginFormData }) {
+  emit("submit", { ...event.data });
 }
 
 function getProviderLabel(provider: SocialProvider) {
@@ -40,7 +41,7 @@ function getProviderLabel(provider: SocialProvider) {
 </script>
 
 <template>
-  <form novalidate @submit.prevent="handleSubmit">
+  <UForm :schema="loginSchema" :state="form" @submit="handleSubmit">
     <Fieldset :disabled="loading || socialLoading" title="Login">
       <p v-if="authError" class="text-error mt-2" role="alert">
         {{ authError }}
@@ -88,5 +89,5 @@ function getProviderLabel(provider: SocialProvider) {
         </UButton>
       </template>
     </Fieldset>
-  </form>
+  </UForm>
 </template>

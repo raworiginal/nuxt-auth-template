@@ -22,6 +22,7 @@ const {
   clearState,
   submit,
 } = useResetAdminUserPassword();
+const toast = useToast();
 
 const title = computed(() =>
   props.user ? `Reset password for ${props.user.name}` : "Reset password",
@@ -38,6 +39,7 @@ watch(successMessage, (message) => {
   if (!message) return;
 
   formKey.value += 1;
+  toast.add({ title: message, color: "success" });
   emit("reset");
 });
 
@@ -59,7 +61,6 @@ function handleSubmit(input: ResetAdminUserPasswordFormData) {
       :field-errors="fieldErrors"
       :loading="loading"
       :error="error"
-      :success-message="successMessage"
       @submit="handleSubmit"
     />
   </AppModal>

@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import type { ChangePasswordFormData } from "#shared/auth/types/auth";
+import { passwordChangeSchema } from "#shared/auth/schemas/auth";
 
 const {
   loading,
   error: authError,
-  successMessage,
   fieldErrors,
 } = defineProps<{
   loading: boolean;
   error: string | null;
-  successMessage: string | null;
   fieldErrors: Record<string, string>;
 }>();
 
@@ -23,21 +22,17 @@ const form = reactive<ChangePasswordFormData>({
   confirmPassword: "",
 });
 
-function handleSubmit() {
-  emit("submit", { ...form });
+function handleSubmit(event: { data: ChangePasswordFormData }) {
+  emit("submit", { ...event.data });
 }
 </script>
 
 <template>
-  <form novalidate @submit.prevent="handleSubmit">
+  <UForm :schema="passwordChangeSchema" :state="form" @submit="handleSubmit">
     <Fieldset :disabled="loading" title="Change Password">
       <p v-if="authError" class="text-error mt-2" role="alert">
         {{ authError }}
       </p>
-      <p v-if="successMessage" class="text-success mt-2" role="status">
-        {{ successMessage }}
-      </p>
-
       <PasswordField
         v-model:password="form.currentPassword"
         :error="fieldErrors.currentPassword"
@@ -65,5 +60,5 @@ function handleSubmit() {
         {{ loading ? "Changing..." : "Change password" }}
       </UButton>
     </Fieldset>
-  </form>
+  </UForm>
 </template>

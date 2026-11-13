@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { BanAdminUserFormData } from "#shared/auth/types/admin";
+import { banAdminUserSchema } from "#shared/auth/schemas/admin";
+
+const formSchema = banAdminUserSchema.omit({ userId: true });
 
 const props = defineProps<{
   loading: boolean;
   error: string | null;
-  successMessage: string | null;
   fieldErrors: Record<string, string>;
 }>();
 
@@ -18,21 +20,17 @@ const form = reactive<BanAdminUserFormData>({
   durationUnit: "days",
 });
 
-function handleSubmit() {
-  emit("submit", { ...form });
+function handleSubmit(event: { data: BanAdminUserFormData }) {
+  emit("submit", { ...event.data });
 }
 </script>
 
 <template>
-  <form novalidate @submit.prevent="handleSubmit">
+  <UForm :schema="formSchema" :state="form" @submit="handleSubmit">
     <Fieldset :disabled="props.loading" title="Ban user">
       <p v-if="props.error" class="text-error mt-2" role="alert">
         {{ props.error }}
       </p>
-      <p v-if="props.successMessage" class="text-success mt-2" role="status">
-        {{ props.successMessage }}
-      </p>
-
       <UFormField
         label="Reason"
         name="banReason"
@@ -79,5 +77,5 @@ function handleSubmit() {
         {{ props.loading ? "Banning..." : "Ban user" }}
       </UButton>
     </Fieldset>
-  </form>
+  </UForm>
 </template>
