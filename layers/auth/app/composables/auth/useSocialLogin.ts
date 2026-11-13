@@ -5,10 +5,10 @@ export function useSocialLogin() {
   const loading = computed(() => action.status.value === "pending");
   const error = computed(() => action.error.value?.message ?? null);
 
-  async function signIn(provider: SocialProvider) {
+  async function signIn(provider: SocialProvider, callbackURL: string) {
     await action.execute({
       provider,
-      callbackURL: "/app",
+      callbackURL,
     });
   }
 

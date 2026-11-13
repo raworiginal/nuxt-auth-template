@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { loggedIn, user } = useUserSession();
+const { loading: logoutLoading, submit: logout } = useLogout();
 </script>
 
 <template>
@@ -20,7 +21,12 @@ const { loggedIn, user } = useUserSession();
 
     <template #right>
       <UColorModeButton />
-      <NavUserMenu v-if="loggedIn" :user="user" />
+      <NavUserMenu
+        v-if="loggedIn"
+        :user="user"
+        :logout-loading="logoutLoading"
+        @logout="logout"
+      />
     </template>
 
     <template #body>

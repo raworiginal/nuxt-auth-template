@@ -13,7 +13,13 @@ const {
 } = useSocialLogin();
 
 function handleSocialSignIn(provider: SocialProvider) {
-  return signInSocial(provider);
+  return signInSocial(provider, "/app");
+}
+
+function handleSubmit(input: Parameters<typeof submit>[0]) {
+  return submit(input, async () => {
+    await navigateTo("/app");
+  });
 }
 </script>
 
@@ -25,7 +31,7 @@ function handleSocialSignIn(provider: SocialProvider) {
     :social-providers="socialProviders"
     :social-loading="socialLoading"
     :social-error="socialError"
-    @submit="submit"
+    @submit="handleSubmit"
     @social-sign-in="handleSocialSignIn"
   />
 </template>

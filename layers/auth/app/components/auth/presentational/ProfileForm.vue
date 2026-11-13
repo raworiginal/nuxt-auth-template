@@ -23,6 +23,15 @@ const form = reactive<ProfileFormData>({
   name: user.name,
   image: user.image,
 });
+
+watch(
+  () => [user.name, user.image] as const,
+  ([name, image]) => {
+    form.name = name;
+    form.image = image;
+  },
+);
+
 const profileImage = computed({
   get: () => form.image,
   set: (value: string) => {

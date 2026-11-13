@@ -7,7 +7,10 @@ export function useRegister() {
   const loading = computed(() => action.status.value === "pending");
   const error = computed(() => action.error.value?.message ?? null);
 
-  async function submit(input: RegisterFormData) {
+  async function submit(
+    input: RegisterFormData,
+    onSuccess?: () => void | Promise<unknown>,
+  ) {
     fieldErrors.value = {};
     const result = registerSchema.safeParse(input);
 
@@ -29,7 +32,7 @@ export function useRegister() {
       },
       {
         onSuccess: async () => {
-          await navigateTo("/app");
+          await onSuccess?.();
         },
       },
     );

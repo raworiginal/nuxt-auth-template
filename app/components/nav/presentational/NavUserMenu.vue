@@ -5,9 +5,12 @@ const props = defineProps<{
     image?: string | null;
     role?: string | null;
   } | null;
+  logoutLoading: boolean;
 }>();
 
-const { loading, submit } = useLogout();
+const emit = defineEmits<{
+  logout: [];
+}>();
 
 const items = computed(() => [
   [
@@ -17,7 +20,13 @@ const items = computed(() => [
       ? [{ label: "Admin Panel", to: "/admin" }]
       : []),
   ],
-  [{ label: "Logout", disabled: loading.value, onSelect: () => submit() }],
+  [
+    {
+      label: "Logout",
+      disabled: props.logoutLoading,
+      onSelect: () => emit("logout"),
+    },
+  ],
 ]);
 </script>
 

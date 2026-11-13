@@ -1,5 +1,11 @@
 <script setup lang="ts">
 const { fieldErrors, loading, error, submit } = useRegister();
+
+function handleSubmit(input: Parameters<typeof submit>[0]) {
+  return submit(input, async () => {
+    await navigateTo("/app");
+  });
+}
 </script>
 
 <template>
@@ -7,6 +13,6 @@ const { fieldErrors, loading, error, submit } = useRegister();
     :field-errors="fieldErrors"
     :loading="loading"
     :error="error"
-    @submit="submit"
+    @submit="handleSubmit"
   />
 </template>

@@ -7,7 +7,10 @@ export function useLogin() {
   const loading = computed(() => action.status.value === "pending");
   const error = computed(() => action.error.value?.message ?? null);
 
-  async function submit(input: LoginFormData) {
+  async function submit(
+    input: LoginFormData,
+    onSuccess?: () => void | Promise<unknown>,
+  ) {
     fieldErrors.value = {};
     const result = loginSchema.safeParse(input);
 
@@ -23,7 +26,7 @@ export function useLogin() {
 
     await action.execute(result.data, {
       onSuccess: async () => {
-        await navigateTo("/app");
+        await onSuccess?.();
       },
     });
   }
