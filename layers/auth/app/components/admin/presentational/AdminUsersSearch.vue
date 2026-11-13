@@ -46,6 +46,7 @@ function submitSearch() {
       v-model="searchValue"
       class="w-full min-w-0 sm:flex-1"
       type="search"
+      icon="i-lucide-search"
       placeholder="Search users"
       aria-label="Search users"
     />

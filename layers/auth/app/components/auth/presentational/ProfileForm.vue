@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import type { ProfileFormData } from "#shared/auth/types/auth";
+import { profileSchema } from "#shared/auth/schemas/auth";
 
 const {
   user,
   loading,
   error: authError,
-  successMessage,
   fieldErrors,
 } = defineProps<{
   user: ProfileFormData;
   loading: boolean;
   error: string | null;
-  successMessage: string | null;
   fieldErrors: Record<string, string>;
 }>();
 
@@ -30,21 +29,17 @@ const profileImage = computed({
   },
 });
 
-function handleSubmit() {
-  emit("submit", { ...form });
+function handleSubmit(event: { data: ProfileFormData }) {
+  emit("submit", { ...event.data });
 }
 </script>
 
 <template>
-  <form novalidate @submit.prevent="handleSubmit">
+  <UForm :schema="profileSchema" :state="form" @submit="handleSubmit">
     <Fieldset :disabled="loading" title="Edit Profile">
       <p v-if="authError" class="text-error mt-2" role="alert">
         {{ authError }}
       </p>
-      <p v-if="successMessage" class="text-success mt-2" role="status">
-        {{ successMessage }}
-      </p>
-
       <UFormField label="Name" name="name" :error="fieldErrors.name">
         <UInput
           id="profile-name"
@@ -77,5 +72,5 @@ function handleSubmit() {
         <UButton to="/app" color="neutral" variant="outline">Cancel</UButton>
       </div>
     </Fieldset>
-  </form>
+  </UForm>
 </template>

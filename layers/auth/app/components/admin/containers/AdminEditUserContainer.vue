@@ -23,6 +23,7 @@ const {
   clearState,
   submit,
 } = useEditAdminUser();
+const toast = useToast();
 
 const initialValues = computed<EditAdminUserFormData>(() => ({
   name: props.user?.name ?? "",
@@ -50,6 +51,7 @@ watch(
 watch(successMessage, (message) => {
   if (!message) return;
 
+  toast.add({ title: message, color: "success" });
   emit("updated");
 });
 
@@ -74,7 +76,6 @@ function handleSubmit(input: EditAdminUserFormData) {
       :field-errors="fieldErrors"
       :loading="loading"
       :error="error"
-      :success-message="successMessage"
       @submit="handleSubmit"
     />
   </AppModal>

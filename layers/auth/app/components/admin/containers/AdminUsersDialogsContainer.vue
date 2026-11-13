@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AdminRemoveUserContainer from "./AdminRemoveUserContainer.vue";
 import type { AdminUser } from "#shared/auth/types/admin";
 
 type DialogAction =
@@ -23,13 +24,10 @@ const unbanUser = ref<AdminUser | null>(null);
 const unbanOpen = ref(false);
 const sessionsUser = ref<AdminUser | null>(null);
 const sessionsOpen = ref(false);
-const removeUser = ref<AdminUser | null>(null);
-const removeOpen = ref(false);
-const removeStatus = ref<string | null>(null);
+const overlay = useOverlay();
+const removeDialog = overlay.create(AdminRemoveUserContainer);
 
 function open(action: DialogAction, user: AdminUser) {
-  removeStatus.value = null;
-
   switch (action) {
     case "edit":
       editUser.value = user;
@@ -52,15 +50,14 @@ function open(action: DialogAction, user: AdminUser) {
       sessionsOpen.value = true;
       break;
     case "remove":
-      removeUser.value = user;
-      removeOpen.value = true;
+      void confirmRemove(user);
       break;
   }
 }
 
-function handleRemoved() {
-  removeStatus.value = "User removed successfully.";
-  emit("refresh");
+async function confirmRemove(user: AdminUser) {
+  const { result } = removeDialog.open({ user });
+  if (await result) emit("refresh");
 }
 
 watch(editOpen, (isOpen) => {
@@ -81,10 +78,6 @@ watch(unbanOpen, (isOpen) => {
 
 watch(sessionsOpen, (isOpen) => {
   if (!isOpen) sessionsUser.value = null;
-});
-
-watch(removeOpen, (isOpen) => {
-  if (!isOpen) removeUser.value = null;
 });
 
 defineExpose({ open });
@@ -115,13 +108,4 @@ defineExpose({ open });
     v-model:open="sessionsOpen"
     :user="sessionsUser"
   />
-  <AdminRemoveUserContainer
-    v-model:open="removeOpen"
-    :user="removeUser"
-    @removed="handleRemoved"
-  />
-
-  <p v-if="removeStatus" class="sr-only" role="status" aria-live="polite">
-    {{ removeStatus }}
-  </p>
 </template>

@@ -9,6 +9,7 @@ const open = defineModel<boolean>("open", { required: true });
 
 const { fieldErrors, loading, error, successMessage, submit } =
   useCreateAdminUser();
+const toast = useToast();
 
 const formKey = ref(0);
 
@@ -16,6 +17,7 @@ watch(successMessage, (message) => {
   if (!message) return;
 
   formKey.value += 1;
+  toast.add({ title: message, color: "success" });
   emit("created");
 });
 
@@ -31,7 +33,6 @@ function handleSubmit(input: CreateAdminUserFormData) {
       :field-errors="fieldErrors"
       :loading="loading"
       :error="error"
-      :success-message="successMessage"
       @submit="handleSubmit"
     />
   </AppModal>

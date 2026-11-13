@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { EditAdminUserFormData } from "#shared/auth/types/admin";
+import { editAdminUserSchema } from "#shared/auth/schemas/admin";
+
+const formSchema = editAdminUserSchema.omit({ userId: true });
 
 const props = defineProps<{
   initialValues: EditAdminUserFormData;
   loading: boolean;
   error: string | null;
-  successMessage: string | null;
   fieldErrors: Record<string, string>;
 }>();
 
@@ -15,21 +17,17 @@ const emit = defineEmits<{
 
 const form = reactive<EditAdminUserFormData>({ ...props.initialValues });
 
-function handleSubmit() {
-  emit("submit", { ...form });
+function handleSubmit(event: { data: EditAdminUserFormData }) {
+  emit("submit", { ...event.data });
 }
 </script>
 
 <template>
-  <form novalidate @submit.prevent="handleSubmit">
+  <UForm :schema="formSchema" :state="form" @submit="handleSubmit">
     <Fieldset :disabled="props.loading" title="Edit user">
       <p v-if="props.error" class="text-error mt-2" role="alert">
         {{ props.error }}
       </p>
-      <p v-if="props.successMessage" class="text-success mt-2" role="status">
-        {{ props.successMessage }}
-      </p>
-
       <UFormField label="Name" name="name" :error="props.fieldErrors.name">
         <UInput
           id="admin-edit-user-name"
@@ -68,5 +66,5 @@ function handleSubmit() {
         {{ props.loading ? "Saving..." : "Save changes" }}
       </UButton>
     </Fieldset>
-  </form>
+  </UForm>
 </template>

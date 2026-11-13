@@ -1,23 +1,25 @@
 <script setup lang="ts">
+import type { NavigationMenuItem } from "@nuxt/ui";
+
 const props = withDefaults(
   defineProps<{ horizontal?: boolean; loggedIn: boolean }>(),
   { horizontal: false },
 );
+
+const items = computed<NavigationMenuItem[]>(() =>
+  props.loggedIn
+    ? [{ label: "App", to: "/app" }]
+    : [
+        { label: "Login", to: "/login" },
+        { label: "Register", to: "/register" },
+      ],
+);
 </script>
+
 <template>
-  <nav aria-label="Main navigation">
-    <ul
-      class="flex gap-2"
-      :class="props.horizontal ? 'flex-row items-center' : 'flex-col'"
-    >
-      <template v-if="props.loggedIn">
-        <li><UButton color="neutral" variant="ghost">Item 1</UButton></li>
-        <li><UButton color="neutral" variant="ghost">Item 2</UButton></li>
-      </template>
-      <template v-else>
-        <li><UButton to="/login" color="neutral" variant="ghost">Login</UButton></li>
-        <li><UButton to="/register" color="neutral" variant="ghost">Register</UButton></li>
-      </template>
-    </ul>
-  </nav>
+  <UNavigationMenu
+    :items="items"
+    :orientation="props.horizontal ? 'horizontal' : 'vertical'"
+    aria-label="Main navigation"
+  />
 </template>

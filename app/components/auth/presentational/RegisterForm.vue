@@ -1,11 +1,9 @@
 <script setup lang="ts">
+import type { AuthFormField } from "@nuxt/ui";
 import type { RegisterFormData } from "#shared/auth/types/auth";
+import { registerSchema } from "#shared/auth/schemas/auth";
 
-const {
-  loading,
-  error: authError,
-  fieldErrors,
-} = defineProps<{
+const props = defineProps<{
   loading: boolean;
   error: string | null;
   fieldErrors: Record<string, string>;
@@ -15,46 +13,74 @@ const emit = defineEmits<{
   submit: [input: RegisterFormData];
 }>();
 
-const form = reactive<RegisterFormData>({
-  email: "",
-  name: "",
-  password: "",
-  confirmPassword: "",
-});
+const fields = computed<AuthFormField[]>(() => [
+  {
+    name: "email",
+    type: "email",
+    label: "Email",
+    placeholder: "Email",
+    autocomplete: "email",
+    defaultValue: "",
+    required: true,
+    error: props.fieldErrors.email,
+  },
+  {
+    name: "name",
+    type: "text",
+    label: "Name",
+    placeholder: "Name",
+    autocomplete: "name",
+    defaultValue: "",
+    required: true,
+    error: props.fieldErrors.name,
+  },
+  {
+    name: "password",
+    type: "password",
+    label: "Password",
+    placeholder: "Password",
+    autocomplete: "new-password",
+    defaultValue: "",
+    required: true,
+    error: props.fieldErrors.password,
+  },
+  {
+    name: "confirmPassword",
+    type: "password",
+    label: "Confirm password",
+    placeholder: "Confirm password",
+    autocomplete: "new-password",
+    defaultValue: "",
+    required: true,
+    error: props.fieldErrors.confirmPassword,
+  },
+]);
 
-function handleSubmit() {
-  emit("submit", { ...form });
+function handleSubmit(event: { data: RegisterFormData }) {
+  emit("submit", { ...event.data });
 }
 </script>
 
 <template>
-  <form novalidate @submit.prevent="handleSubmit">
-    <Fieldset :disabled="loading" title="Register">
-      <p v-if="authError" class="text-error mt-2" role="alert">
-        {{ authError }}
-      </p>
-
-      <UserIdentityFields
-        v-model:email="form.email"
-        v-model:name="form.name"
-        :errors="fieldErrors"
-      />
-
-      <PasswordField
-        v-model:password="form.password"
-        :error="fieldErrors.password"
-      />
-      <PasswordField
-        v-model:password="form.confirmPassword"
-        :error="fieldErrors.confirmPassword"
-        id="confirm-password"
-        placeholder="Confirm Password"
-        label="Confirm Password"
-        name="confirmPassword"
-      />
-      <UButton class="mt-4" type="submit" :loading="loading">
-        {{ loading ? "Registering..." : "Register" }}
-      </UButton>
-    </Fieldset>
-  </form>
+  <UCard>
+    <UAuthForm
+      title="Register"
+      :fields="fields"
+      :schema="registerSchema"
+      :disabled="loading"
+      :loading="loading"
+      :submit="{ label: loading ? 'Registering…' : 'Register', block: true }"
+      @submit="handleSubmit"
+    >
+      <template #validation>
+        <UAlert
+          v-if="props.error"
+          color="error"
+          variant="subtle"
+          role="alert"
+          :description="props.error"
+        />
+      </template>
+    </UAuthForm>
+  </UCard>
 </template>

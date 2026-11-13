@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { TableColumn } from "@nuxt/ui";
 import type { AdminUser } from "#shared/auth/types/admin";
 
 const props = defineProps<{
@@ -28,7 +29,7 @@ const providerLabels: Record<string, string> = {
   google: "Google",
 };
 
-const columns = [
+const columns: TableColumn<AdminUser>[] = [
   { accessorKey: "name", header: "Name" },
   { accessorKey: "email", header: "Email" },
   { accessorKey: "providers", header: "Sign-in providers" },
@@ -53,22 +54,41 @@ function formatProvider(provider: string) {
 </script>
 
 <template>
-  <p v-if="loading" class="py-8 text-center text-muted" role="status">
-    Loading users...
-  </p>
-  <p v-else-if="error" class="py-4 text-error" role="alert">{{ error }}</p>
-  <p
-    v-else-if="users.length === 0"
-    class="py-8 text-center text-muted"
-  >
-    No users found.
-  </p>
-  <template v-else>
-    <p class="mb-3 text-sm text-muted" aria-live="polite">
-      {{ total }} users found.
+  <div class="space-y-4">
+    <UAlert
+      v-if="error"
+      color="error"
+      variant="subtle"
+      icon="i-lucide-circle-alert"
+      title="Unable to load users"
+      :description="error"
+      role="alert"
+    />
+
+    <p v-if="!error" class="text-sm text-muted" aria-live="polite">
+      {{ total }} {{ total === 1 ? "user" : "users" }} found.
     </p>
 
-    <ul class="space-y-3 md:hidden" aria-label="Users">
+    <UEmpty
+      v-if="users.length === 0 && !loading && !error"
+      class="md:hidden"
+      icon="i-lucide-users-round"
+      title="No users found"
+      description="Try changing your search or create a user."
+    />
+    <p
+      v-else-if="loading"
+      class="py-8 text-center text-muted md:hidden"
+      role="status"
+    >
+      Loading users...
+    </p>
+
+    <ul
+      v-if="users.length > 0 && !error"
+      class="space-y-3 md:hidden"
+      aria-label="Users"
+    >
       <li v-for="user in users" :key="user.id">
         <UCard>
           <div class="min-w-0">
@@ -126,8 +146,24 @@ function formatProvider(provider: string) {
       </li>
     </ul>
 
-    <div class="hidden overflow-x-auto md:block">
-      <UTable :data="users" :columns="columns" class="min-w-[48rem]">
+    <div v-if="!error" class="hidden overflow-x-auto md:block">
+      <UTable
+        :data="users"
+        :columns="columns"
+        :loading="loading"
+        class="min-w-[48rem]"
+      >
+        <template #empty>
+          <p v-if="loading" class="py-8 text-center text-muted" role="status">
+            Loading users...
+          </p>
+          <UEmpty
+            v-else
+            icon="i-lucide-users-round"
+            title="No users found"
+            description="Try changing your search or create a user."
+          />
+        </template>
         <template #name-cell="{ row }">
           <span class="max-w-56 break-words">{{ row.original.name }}</span>
         </template>
@@ -173,42 +209,30 @@ function formatProvider(provider: string) {
         </template>
       </UTable>
     </div>
-  </template>
 
-  <div
-    v-if="!loading && !error"
-    class="mt-5 flex flex-col gap-3 border-t border-default pt-4 sm:flex-row sm:items-center sm:justify-between"
-  >
-    <div class="flex items-center gap-2 text-sm">
-      <span>Users per page</span>
-      <USelect
-        id="admin-user-page-size"
-        class="w-24"
-        :items="pageSizeItems"
-        :model-value="limit"
-        aria-label="Users per page"
-        @update:model-value="emit('pageSizeChange', Number($event))"
+    <div
+      v-if="!loading && !error"
+      class="flex flex-col gap-3 border-t border-default pt-4 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div class="flex items-center gap-2 text-sm">
+        <span>Users per page</span>
+        <USelect
+          id="admin-user-page-size"
+          class="w-24"
+          :items="pageSizeItems"
+          :model-value="limit"
+          aria-label="Users per page"
+          @update:model-value="emit('pageSizeChange', Number($event))"
+        />
+      </div>
+      <UPagination
+        v-if="total > 0"
+        :page="Math.floor((offset ?? 0) / (limit ?? 1)) + 1"
+        :items-per-page="limit ?? 1"
+        :total="total"
+        size="sm"
+        @update:page="emit('pageChange', ($event - 1) * (limit ?? 1))"
       />
-    </div>
-    <div class="grid grid-cols-2 gap-2 sm:flex sm:items-center">
-      <UButton
-        color="neutral"
-        variant="outline"
-        size="sm"
-        :disabled="!offset"
-        @click="emit('pageChange', Math.max(0, (offset ?? 0) - (limit ?? 1)))"
-      >
-        Previous
-      </UButton>
-      <UButton
-        color="neutral"
-        variant="outline"
-        size="sm"
-        :disabled="(offset ?? 0) + (limit ?? 0) >= total"
-        @click="emit('pageChange', (offset ?? 0) + (limit ?? 1))"
-      >
-        Next
-      </UButton>
     </div>
   </div>
 </template>

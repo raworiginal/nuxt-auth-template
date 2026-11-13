@@ -14,6 +14,16 @@ const {
   successMessage: passwordSuccessMessage,
   submit: submitPassword,
 } = useChangePassword();
+
+const toast = useToast();
+
+watch(profileSuccessMessage, (message) => {
+  if (message) toast.add({ title: message, color: "success" });
+});
+
+watch(passwordSuccessMessage, (message) => {
+  if (message) toast.add({ title: message, color: "success" });
+});
 </script>
 
 <template>
@@ -23,14 +33,12 @@ const {
       :field-errors="profileFieldErrors"
       :loading="profileLoading"
       :error="profileError"
-      :success-message="profileSuccessMessage"
       @submit="submitProfile"
     />
     <ChangePasswordForm
       :field-errors="passwordFieldErrors"
       :loading="passwordLoading"
       :error="passwordError"
-      :success-message="passwordSuccessMessage"
       @submit="submitPassword"
     />
   </main>
