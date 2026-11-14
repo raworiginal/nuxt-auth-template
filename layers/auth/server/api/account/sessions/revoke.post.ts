@@ -1,5 +1,5 @@
-import { assertSameOriginAdminRequest as assertSameOriginJsonRequest } from "../../../utils/admin-request";
-import { enforceCustomApiRateLimit } from "../../../utils/custom-api-rate-limit";
+import { assertSameOriginAdminRequest as assertSameOriginJsonRequest } from "#server/utils/admin-request";
+import { enforceCustomApiRateLimit } from "#server/utils/custom-api-rate-limit";
 
 export default defineEventHandler(async (event) => {
   setResponseHeader(event, "cache-control", "no-store");
