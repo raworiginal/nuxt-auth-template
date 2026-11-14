@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getAdminRequestRejection } from "../../../../server/utils/admin-request";
+import { getAdminRequestRejection } from "../../../../layers/auth/server/utils/admin-request";
 
 const requestOrigin = "https://admin.example.test";
 

@@ -5,8 +5,8 @@ import {
 } from "#shared/auth/schemas/admin";
 import { db } from "@nuxthub/db";
 import { account } from "#auth/schema";
-import { assertSameOriginAdminRequest } from "../../utils/admin-request";
-import { enforceCustomApiRateLimit } from "../../utils/custom-api-rate-limit";
+import { assertSameOriginAdminRequest } from "#layers/auth/server/utils/admin-request";
+import { enforceCustomApiRateLimit } from "#server/utils/custom-api-rate-limit";
 
 export default defineEventHandler(async (event) => {
   setResponseHeader(event, "cache-control", "no-store");

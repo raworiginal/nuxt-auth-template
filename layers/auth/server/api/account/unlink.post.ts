@@ -1,4 +1,4 @@
-import { assertSameOriginAdminRequest as assertSameOriginJsonRequest } from "#server/utils/admin-request";
+import { assertSameOriginAdminRequest as assertSameOriginJsonRequest } from "#layers/auth/server/utils/admin-request";
 import { enforceCustomApiRateLimit } from "#server/utils/custom-api-rate-limit";
 
 export default defineEventHandler(async (event) => {
