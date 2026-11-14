@@ -11,6 +11,10 @@ const { data: socialProviders } = await useFetch<SocialProvider[]>(
   { default: () => [] },
 );
 const { loading: socialLoading, error: socialError, signIn } = useSocialLogin();
+
+function handleSocialSignIn(provider: SocialProvider) {
+  return signIn(provider, callbackURL.value);
+}
 </script>
 
 <template>
@@ -34,7 +38,7 @@ const { loading: socialLoading, error: socialError, signIn } = useSocialLogin();
           variant="outline"
           :loading="socialLoading"
           :disabled="socialLoading"
-          @click="signIn(provider, callbackURL)"
+          @click="handleSocialSignIn(provider)"
         >
           Continue with {{ provider === "google" ? "Google" : "GitHub" }}
         </UButton>
@@ -49,5 +53,14 @@ const { loading: socialLoading, error: socialError, signIn } = useSocialLogin();
       />
     </UPageCard>
   </div>
-  <RegisterForm v-else :loading="loading" :error="error" @submit="submit" />
+  <RegisterForm
+    v-else
+    :loading="loading"
+    :error="error"
+    :social-providers="socialProviders"
+    :social-loading="socialLoading"
+    :social-error="socialError"
+    @submit="submit"
+    @social-sign-in="handleSocialSignIn"
+  />
 </template>

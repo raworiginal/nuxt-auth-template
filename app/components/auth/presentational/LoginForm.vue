@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AuthFormField, ButtonProps, FormSubmitEvent } from "@nuxt/ui";
+import type { AuthFormField, FormSubmitEvent } from "@nuxt/ui";
 import type { LoginFormData, SocialProvider } from "#shared/auth/types/auth";
 import { loginSchema } from "#shared/auth/schemas/auth";
 
@@ -40,19 +40,6 @@ const fields = computed<AuthFormField[]>(() =>
           required: true,
         },
       ],
-);
-
-const providers = computed<ButtonProps[]>(() =>
-  props.socialProviders.map((provider) => ({
-    label: props.socialLoading
-      ? "Connecting…"
-      : `Continue with ${provider === "google" ? "Google" : "GitHub"}`,
-    color: "neutral",
-    variant: "outline",
-    disabled: props.loading || props.socialLoading,
-    loading: props.socialLoading,
-    onClick: () => emit("socialSignIn", provider),
-  })),
 );
 
 function handleSubmit(event: FormSubmitEvent<LoginFormData>) {
@@ -109,34 +96,49 @@ function handleSubmit(event: FormSubmitEvent<LoginFormData>) {
     <UAuthForm
       title="Login"
       :fields="fields"
-      :providers="providers"
       :schema="loginSchema"
-      separator="or continue with"
       :disabled="loading || socialLoading"
       :loading="loading"
       :submit="{ label: loading ? 'Signing in…' : 'Login', block: true }"
       @submit="handleSubmit"
     >
       <template #validation>
-        <div
-          v-if="props.error || props.socialError"
-          class="space-y-2"
-          role="alert"
-        >
+        <div v-if="props.error" class="space-y-2" role="alert">
           <UAlert
             v-if="props.error"
             color="error"
             variant="subtle"
             :description="props.error"
           />
-          <UAlert
-            v-if="props.socialError"
-            color="error"
-            variant="subtle"
-            :description="props.socialError"
-          />
         </div>
       </template>
     </UAuthForm>
+    <div v-if="props.socialProviders.length" class="mt-5 space-y-4">
+      <USeparator label="or continue with" />
+      <UButton
+        v-for="provider in props.socialProviders"
+        :key="provider"
+        type="button"
+        block
+        color="neutral"
+        variant="outline"
+        :loading="props.socialLoading"
+        :disabled="props.loading || props.socialLoading"
+        @click="emit('socialSignIn', provider)"
+      >
+        {{
+          props.socialLoading
+            ? "Connecting…"
+            : `Continue with ${provider === "google" ? "Google" : "GitHub"}`
+        }}
+      </UButton>
+      <UAlert
+        v-if="props.socialError"
+        color="error"
+        variant="subtle"
+        role="alert"
+        :description="props.socialError"
+      />
+    </div>
   </UPageCard>
 </template>
