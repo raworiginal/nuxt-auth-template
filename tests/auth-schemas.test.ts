@@ -5,11 +5,11 @@ import {
   passwordChangeSchema,
   profileSchema,
   registerSchema,
-} from "../shared/auth/schemas/auth";
+} from "../layers/auth/shared/auth/schemas/auth";
 import {
   createAdminUserSchema,
   listAdminUserProvidersSchema,
-} from "../shared/auth/schemas/admin";
+} from "../layers/auth/shared/auth/schemas/admin";
 
 test("registration accepts valid data and trims the name", () => {
   const result = registerSchema.safeParse({

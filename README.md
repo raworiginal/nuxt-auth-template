@@ -30,10 +30,9 @@ A Nuxt 4 starter project with Better Auth, NuxtHub, and PostgreSQL. It includes 
 
 ## How the project is organized
 
-- `layers/auth/` contains the default admin/profile pages, components, composables, route rules, and styling. It is a local Nuxt layer, not a package dependency.
-- `app/` contains project-owned pages and UI, including login, registration, navigation, and Better Auth client configuration.
+- `layers/auth/` contains the default login, registration, admin, and profile experiences; their components, composables, route rules, shared schemas, and types. It is a local Nuxt layer, not a package dependency.
+- `app/` contains project-owned pages and UI, including navigation and Better Auth client configuration.
 - `server/` contains this project's Better Auth server configuration, API handlers, and NuxtHub-managed PostgreSQL migrations. Better Auth tables are generated from the enabled plugins.
-- `shared/auth/` contains schemas and types used by both the app and server.
 - `/app/notes` is a small full-stack example: its PostgreSQL schema, authenticated CRUD endpoints, ownership checks, and UI demonstrate how to add private application data.
 
 The root `nuxt.config.ts` extends `./layers/auth`. To replace a layer page or component, add a project file at the same path under `app/`; project files take priority over extended-layer files. You can also edit or remove the local layer directly in your copied project.

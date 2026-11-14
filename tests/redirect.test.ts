@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getSafeLocalRedirect } from "../shared/auth/redirect";
+import { getSafeLocalRedirect } from "../layers/auth/shared/auth/redirect";
 
 test("local callback paths and query strings are preserved", () => {
   assert.equal(
