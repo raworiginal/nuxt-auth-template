@@ -56,9 +56,7 @@ export const listUsersOptionsSchema = z.object({
   offset: z.number().optional(),
   searchValue: z.string().optional(),
   searchField: z.enum(["email", "name"]).optional(),
-  searchOperator: z
-    .enum(["contains", "starts_with", "ends_with"])
-    .optional(),
+  searchOperator: z.enum(["contains", "starts_with", "ends_with"]).optional(),
 });
 
 export const listAdminUserProvidersSchema = z.object({
@@ -77,9 +75,10 @@ export const selectedAdminUserIdSchema = z.object({
   userId: z.string().trim().min(1, "User is required"),
 });
 
-export const selectedAdminUserSessionIdSchema = selectedAdminUserIdSchema.extend({
-  sessionId: z.string().trim().min(1, "Session is required"),
-});
+export const selectedAdminUserSessionIdSchema =
+  selectedAdminUserIdSchema.extend({
+    sessionId: z.string().trim().min(1, "Session is required"),
+  });
 
 export const revokeAllAdminUserSessionsSchema = selectedAdminUserIdSchema;
 

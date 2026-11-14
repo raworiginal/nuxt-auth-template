@@ -36,12 +36,44 @@ function requiredAuthSecret(): string {
 
 function loadSetupConfig() {
   const email = requiredEnv("ADMIN_EMAIL").toLowerCase();
-  const password = process.env.ADMIN_PASSWORD;
-  if (!password) {
-    throw new Error("Required environment variable ADMIN_PASSWORD is not set.");
+  const authMode =
+    process.env.NUXT_PUBLIC_AUTH_MODE?.trim() || "email-password";
+  if (authMode !== "email-password" && authMode !== "social-only") {
+    throw new Error(
+      'NUXT_PUBLIC_AUTH_MODE must be either "email-password" or "social-only".',
+    );
   }
-  if (password.length < 12) {
-    throw new Error("ADMIN_PASSWORD must be at least 12 characters long.");
+
+  const socialProviderIds: string[] = [];
+  for (const provider of ["google", "github"] as const) {
+    const providerName = provider.toUpperCase();
+    const clientId = process.env[`NUXT_${providerName}_CLIENT_ID`]?.trim();
+    const clientSecret =
+      process.env[`NUXT_${providerName}_CLIENT_SECRET`]?.trim();
+    if (Boolean(clientId) !== Boolean(clientSecret)) {
+      throw new Error(
+        `Both NUXT_${providerName}_CLIENT_ID and NUXT_${providerName}_CLIENT_SECRET must be configured together.`,
+      );
+    }
+    if (clientId && clientSecret) socialProviderIds.push(provider);
+  }
+  if (authMode === "social-only" && socialProviderIds.length === 0) {
+    throw new Error(
+      "Social-only authentication requires at least one configured social provider.",
+    );
+  }
+
+  let password: string | undefined;
+  if (authMode === "email-password") {
+    password = process.env.ADMIN_PASSWORD;
+    if (!password) {
+      throw new Error(
+        "Required environment variable ADMIN_PASSWORD is not set.",
+      );
+    }
+    if (password.length < 12) {
+      throw new Error("ADMIN_PASSWORD must be at least 12 characters long.");
+    }
   }
 
   return {
@@ -52,7 +84,10 @@ function loadSetupConfig() {
     name: requiredEnv("ADMIN_NAME"),
     email,
     password,
-    baseURL: process.env.NUXT_PUBLIC_SITE_URL?.trim() || "http://localhost:3000",
+    authMode,
+    socialProviderIds,
+    baseURL:
+      process.env.NUXT_PUBLIC_SITE_URL?.trim() || "http://localhost:3000",
   };
 }
 
@@ -74,7 +109,9 @@ function runCommand(args: string[], env: NodeJS.ProcessEnv = process.env) {
 async function main() {
   const config = loadSetupConfig();
   if (config.secret.length < 32) {
-    throw new Error("The Better Auth secret must be at least 32 characters long.");
+    throw new Error(
+      "The Better Auth secret must be at least 32 characters long.",
+    );
   }
 
   console.info("Preparing Nuxt and generating the Better Auth schema...");
@@ -98,14 +135,42 @@ async function main() {
   try {
     const db = drizzle({ client, schema: authSchema });
     const [existingUser] = await db
-      .select({ role: authSchema.user.role })
+      .select({
+        id: authSchema.user.id,
+        role: authSchema.user.role,
+        emailVerified: authSchema.user.emailVerified,
+      })
       .from(authSchema.user)
       .where(eq(authSchema.user.email, config.email))
       .limit(1);
 
     if (existingUser) {
       if (existingUser.role === "admin") {
-        console.info(`Admin ${config.email} already exists; leaving it unchanged.`);
+        console.info(
+          `Admin ${config.email} already exists; leaving it unchanged.`,
+        );
+        return;
+      }
+      if (config.authMode === "social-only") {
+        const accounts = await db
+          .select({ providerId: authSchema.account.providerId })
+          .from(authSchema.account)
+          .where(eq(authSchema.account.userId, existingUser.id));
+        if (
+          !existingUser.emailVerified ||
+          !accounts.some(({ providerId }) =>
+            config.socialProviderIds.includes(providerId),
+          )
+        ) {
+          throw new Error(
+            `Existing user ${config.email} has no verified account from a configured social provider; no changes were made.`,
+          );
+        }
+        await db
+          .update(authSchema.user)
+          .set({ role: "admin" })
+          .where(eq(authSchema.user.id, existingUser.id));
+        console.info(`Promoted existing OAuth user ${config.email} to admin.`);
         return;
       }
       throw new Error(
@@ -113,10 +178,17 @@ async function main() {
       );
     }
 
+    if (config.authMode === "social-only") {
+      throw new Error(
+        `No account exists for ${config.email}. Register by signing in with a configured social provider, then rerun pnpm auth:setup to promote that verified OAuth account.`,
+      );
+    }
+
     const auth = betterAuth({
       secret: config.secret,
       baseURL: config.baseURL,
-      emailAndPassword: { enabled: true },
+      emailAndPassword: { enabled: config.authMode === "email-password" },
+      rateLimit: { enabled: true, storage: "database" },
       database: drizzleAdapter(db, { provider: "pg", schema: authSchema }),
       plugins: [admin()],
     });
@@ -124,7 +196,7 @@ async function main() {
     const result = await auth.api.createUser({
       body: {
         email: config.email,
-        password: config.password,
+        password: config.password!,
         name: config.name,
         role: "admin",
         data: { emailVerified: true },

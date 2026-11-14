@@ -4,20 +4,13 @@ import type {
   ListUsersResult,
 } from "#shared/auth/types/admin";
 
-export async function useAdminUsers(
-  options: ComputedRef<ListUsersOptions>,
-) {
+export async function useAdminUsers(options: ComputedRef<ListUsersOptions>) {
   const { data, pending, error, refresh } = await useAuthAsyncData(
     "admin-users",
     async (requestFetch) => {
       const params = new URLSearchParams();
-      const {
-        limit,
-        offset,
-        searchValue,
-        searchField,
-        searchOperator,
-      } = options.value;
+      const { limit, offset, searchValue, searchField, searchOperator } =
+        options.value;
 
       if (limit !== undefined) params.set("limit", String(limit));
       if (offset !== undefined) params.set("offset", String(offset));

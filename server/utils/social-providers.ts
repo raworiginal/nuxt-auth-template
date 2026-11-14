@@ -51,5 +51,7 @@ export function getConfiguredSocialProviders(
 export function getConfiguredSocialProviderIds(
   runtimeConfig: SocialProviderRuntimeConfig,
 ): SocialProvider[] {
-  return Object.keys(getConfiguredSocialProviders(runtimeConfig)) as SocialProvider[];
+  return Object.keys(
+    getConfiguredSocialProviders(runtimeConfig),
+  ) as SocialProvider[];
 }

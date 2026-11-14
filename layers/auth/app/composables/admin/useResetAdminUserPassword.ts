@@ -2,14 +2,14 @@ import { getErrorMessage } from "#layers/auth/app/utils/error";
 import type { ResetAdminUserPasswordInput } from "#shared/auth/types/admin";
 
 export function useResetAdminUserPassword() {
-  const action = useAuthClientAction(
-    (client) => client.admin.setUserPassword,
-  );
+  const action = useAuthClientAction((client) => client.admin.setUserPassword);
   const successMessage = ref<string | null>(null);
   const showActionError = ref(false);
   const loading = computed(() => action.status.value === "pending");
   const error = computed(() =>
-    showActionError.value && action.status.value === "error" && action.error.value
+    showActionError.value &&
+    action.status.value === "error" &&
+    action.error.value
       ? getErrorMessage(action.error.value)
       : null,
   );

@@ -24,7 +24,12 @@ function handleSubmit(event: FormSubmitEvent<ChangePasswordFormData>) {
 </script>
 
 <template>
-  <UForm :schema="passwordChangeSchema" :state="form" :disabled="loading" @submit="handleSubmit">
+  <UForm
+    :schema="passwordChangeSchema"
+    :state="form"
+    :disabled="loading"
+    @submit="handleSubmit"
+  >
     <Fieldset title="Change Password">
       <p v-if="authError" class="text-error mt-2" role="alert">
         {{ authError }}

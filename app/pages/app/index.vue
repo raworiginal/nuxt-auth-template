@@ -3,8 +3,14 @@ const { user } = useUserSession();
 
 const shortcuts = computed(() => [
   {
+    title: "Private notes",
+    description: "Create and manage notes that only you can access.",
+    icon: "i-lucide-notebook-pen",
+    to: "/app/notes",
+  },
+  {
     title: "Your profile",
-    description: "Update your personal details or change your password.",
+    description: "Update your personal details and manage sign-in methods.",
     icon: "i-lucide-user-round-cog",
     to: "/app/profile",
   },

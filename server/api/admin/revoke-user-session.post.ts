@@ -1,14 +1,18 @@
-import { getHeaders, readBody, setResponseHeader } from "h3";
 import {
   revokeAdminUserSessionResultSchema,
   selectedAdminUserSessionIdSchema,
 } from "#shared/auth/schemas/admin";
+import { assertSameOriginAdminRequest } from "../../utils/admin-request";
+import { enforceCustomApiRateLimit } from "../../utils/custom-api-rate-limit";
 
 export default defineEventHandler(async (event) => {
-  setResponseHeader(event as never, "cache-control", "no-store");
+  setResponseHeader(event, "cache-control", "no-store");
+  assertSameOriginAdminRequest(event);
+  const { user } = await requireUserSession(event, { user: { role: "admin" } });
+  await enforceCustomApiRateLimit(event, user.id, "admin");
 
   const parsed = selectedAdminUserSessionIdSchema.safeParse(
-    await readBody(event as never),
+    await readBody(event),
   );
   if (!parsed.success) {
     throw createError({
@@ -18,15 +22,15 @@ export default defineEventHandler(async (event) => {
   }
 
   const auth = serverAuth();
-  const headers = getHeaders(event as never);
+  const headers = getRequestHeaders(event);
   const authApi = auth.api as typeof auth.api & {
     listUserSessions: (input: {
       body: { userId: string };
-      headers: ReturnType<typeof getHeaders>;
+      headers: ReturnType<typeof getRequestHeaders>;
     }) => Promise<{ sessions: Array<{ id: string; token: string }> }>;
     revokeUserSession: (input: {
       body: { sessionToken: string };
-      headers: ReturnType<typeof getHeaders>;
+      headers: ReturnType<typeof getRequestHeaders>;
     }) => Promise<{ success: boolean }>;
   };
 

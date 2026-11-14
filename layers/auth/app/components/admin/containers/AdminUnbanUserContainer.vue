@@ -10,13 +10,8 @@ const emit = defineEmits<{
 }>();
 
 const open = defineModel<boolean>("open", { required: true });
-const {
-  loading,
-  error,
-  successMessage,
-  clearState,
-  submit,
-} = useUnbanAdminUser();
+const { loading, error, successMessage, clearState, submit } =
+  useUnbanAdminUser();
 const toast = useToast();
 
 const title = computed(() =>
@@ -43,12 +38,18 @@ function handleConfirm() {
   <AppModal v-model:open="open" :title="title" :close-disabled="loading">
     <div v-if="props.user">
       <p>
-        Are you sure you want to unban <strong>{{ props.user.name }}</strong>?
+        Are you sure you want to unban <strong>{{ props.user.name }}</strong
+        >?
       </p>
       <p v-if="error" class="text-error mt-2" role="alert">{{ error }}</p>
     </div>
     <template #footer="{ close }">
-      <UButton color="neutral" variant="outline" :disabled="loading" @click="close">
+      <UButton
+        color="neutral"
+        variant="outline"
+        :disabled="loading"
+        @click="close"
+      >
         Cancel
       </UButton>
       <UButton type="button" :loading="loading" @click="handleConfirm">

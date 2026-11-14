@@ -21,8 +21,10 @@ export function useAdminUserSessions() {
   const error = ref<string | null>(null);
   const successMessage = ref<string | null>(null);
   const loading = computed(() => action.status.value === "pending");
+  let latestLoadId = 0;
 
   function clearState() {
+    latestLoadId += 1;
     sessions.value = [];
     fieldErrors.value = {};
     error.value = null;
@@ -31,6 +33,7 @@ export function useAdminUserSessions() {
 
   async function load(input: ListAdminUserSessionsInput) {
     clearState();
+    const loadId = latestLoadId;
 
     const inputResult = listAdminUserSessionsSchema.safeParse(input);
     if (!inputResult.success) {
@@ -44,6 +47,9 @@ export function useAdminUserSessions() {
     }
 
     await action.execute(inputResult.data);
+    // A newer selection or a closed dialog invalidates this response.
+    if (loadId !== latestLoadId) return;
+
     if (action.status.value === "error") {
       const caughtError = action.error.value?.raw;
       const statusCode = action.error.value?.status;
@@ -71,5 +77,13 @@ export function useAdminUserSessions() {
     successMessage.value = "Sessions loaded successfully.";
   }
 
-  return { sessions, fieldErrors, error, successMessage, loading, clearState, load };
+  return {
+    sessions,
+    fieldErrors,
+    error,
+    successMessage,
+    loading,
+    clearState,
+    load,
+  };
 }
