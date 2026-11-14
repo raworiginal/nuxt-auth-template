@@ -43,7 +43,12 @@ function handleSubmit(event: FormSubmitEvent<ProfileFormData>) {
 </script>
 
 <template>
-  <UForm :schema="profileSchema" :state="form" :disabled="loading" @submit="handleSubmit">
+  <UForm
+    :schema="profileSchema"
+    :state="form"
+    :disabled="loading"
+    @submit="handleSubmit"
+  >
     <Fieldset title="Edit Profile">
       <p v-if="authError" class="text-error mt-2" role="alert">
         {{ authError }}

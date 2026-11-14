@@ -1,4 +1,3 @@
-import { readBody, setResponseHeader } from "h3";
 import { inArray } from "drizzle-orm";
 import {
   listAdminUserProvidersResultSchema,
@@ -6,22 +5,22 @@ import {
 } from "#shared/auth/schemas/admin";
 import { db } from "@nuxthub/db";
 import { account } from "#auth/schema";
+import { assertSameOriginAdminRequest } from "../../utils/admin-request";
+import { enforceCustomApiRateLimit } from "../../utils/custom-api-rate-limit";
 
 export default defineEventHandler(async (event) => {
-  setResponseHeader(event as never, "cache-control", "no-store");
+  setResponseHeader(event, "cache-control", "no-store");
+  assertSameOriginAdminRequest(event);
+  const { user } = await requireUserSession(event, { user: { role: "admin" } });
+  await enforceCustomApiRateLimit(event, user.id, "admin");
 
-  const parsed = listAdminUserProvidersSchema.safeParse(
-    await readBody(event as never),
-  );
+  const parsed = listAdminUserProvidersSchema.safeParse(await readBody(event));
   if (!parsed.success) {
     throw createError({
       statusCode: 400,
       statusMessage: "A valid list of users is required.",
     });
   }
-
-  await requireUserSession(event, { user: { role: "admin" } });
-
   const userIds = [...new Set(parsed.data.userIds)];
   const providersByUserId = Object.fromEntries(
     userIds.map((userId) => [userId, [] as string[]]),

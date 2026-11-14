@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { user } = useUserSession();
+const authMode = useRuntimeConfig().public.authMode;
 const {
   loading: profileLoading,
   error: profileError,
@@ -33,6 +34,7 @@ watch(passwordSuccessMessage, (message) => {
       @submit="submitProfile"
     />
     <ChangePasswordForm
+      v-if="authMode !== 'social-only'"
       :loading="passwordLoading"
       :error="passwordError"
       @submit="submitPassword"

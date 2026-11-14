@@ -18,6 +18,9 @@ export default defineNuxtConfig({
     googleClientSecret: "",
     githubClientId: "",
     githubClientSecret: "",
+    public: {
+      authMode: "email-password",
+    },
   },
   css: ["~~/app/assets/css/main.css"],
 });

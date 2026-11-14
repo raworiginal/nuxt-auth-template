@@ -15,13 +15,8 @@ const emit = defineEmits<{
 
 const open = defineModel<boolean>("open", { required: true });
 const formKey = ref(0);
-const {
-  loading,
-  error,
-  successMessage,
-  clearState,
-  submit,
-} = useEditAdminUser();
+const { loading, error, successMessage, clearState, submit } =
+  useEditAdminUser();
 const toast = useToast();
 
 const initialValues = computed<EditAdminUserFormData>(() => ({
@@ -77,7 +72,12 @@ function handleSubmit(input: EditAdminUserFormData) {
       @submit="handleSubmit"
     />
     <template #footer="{ close }">
-      <UButton color="neutral" variant="outline" :disabled="loading" @click="close">
+      <UButton
+        color="neutral"
+        variant="outline"
+        :disabled="loading"
+        @click="close"
+      >
         Cancel
       </UButton>
       <UButton type="submit" form="admin-edit-user-form" :loading="loading">

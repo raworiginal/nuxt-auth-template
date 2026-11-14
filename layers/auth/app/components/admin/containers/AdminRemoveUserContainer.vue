@@ -40,7 +40,8 @@ async function handleConfirm() {
     <template #body>
       <div v-if="props.user">
         <p>
-          Remove <span class="font-semibold">{{ props.user.name }}</span>?
+          Remove <span class="font-semibold">{{ props.user.name }}</span
+          >?
         </p>
         <p class="mt-2 text-sm text-muted">This action cannot be undone.</p>
 

@@ -4,6 +4,7 @@ import type { LoginFormData, SocialProvider } from "#shared/auth/types/auth";
 import { loginSchema } from "#shared/auth/schemas/auth";
 
 const props = defineProps<{
+  authMode: string;
   loading: boolean;
   error: string | null;
   socialProviders: SocialProvider[];
@@ -16,26 +17,30 @@ const emit = defineEmits<{
   socialSignIn: [provider: SocialProvider];
 }>();
 
-const fields = computed<AuthFormField[]>(() => [
-  {
-    name: "email",
-    type: "email",
-    label: "Email",
-    placeholder: "Email",
-    autocomplete: "email",
-    defaultValue: "",
-    required: true,
-  },
-  {
-    name: "password",
-    type: "password",
-    label: "Password",
-    placeholder: "Password",
-    autocomplete: "current-password",
-    defaultValue: "",
-    required: true,
-  },
-]);
+const fields = computed<AuthFormField[]>(() =>
+  props.authMode === "social-only"
+    ? []
+    : [
+        {
+          name: "email",
+          type: "email",
+          label: "Email",
+          placeholder: "Email",
+          autocomplete: "email",
+          defaultValue: "",
+          required: true,
+        },
+        {
+          name: "password",
+          type: "password",
+          label: "Password",
+          placeholder: "Password",
+          autocomplete: "current-password",
+          defaultValue: "",
+          required: true,
+        },
+      ],
+);
 
 const providers = computed<ButtonProps[]>(() =>
   props.socialProviders.map((provider) => ({
@@ -56,7 +61,51 @@ function handleSubmit(event: FormSubmitEvent<LoginFormData>) {
 </script>
 
 <template>
-  <UPageCard>
+  <UPageCard v-if="props.authMode === 'social-only'">
+    <div class="space-y-2 text-center">
+      <h1 class="text-xl font-semibold">Login</h1>
+      <p class="text-sm text-muted">
+        Sign in or create an account with a social provider.
+      </p>
+    </div>
+    <div class="mt-6 space-y-3">
+      <UButton
+        v-for="provider in props.socialProviders"
+        :key="provider"
+        block
+        color="neutral"
+        variant="outline"
+        :loading="props.socialLoading"
+        :disabled="props.loading || props.socialLoading"
+        @click="emit('socialSignIn', provider)"
+      >
+        {{
+          props.socialLoading
+            ? "Connecting…"
+            : `Continue with ${provider === "google" ? "Google" : "GitHub"}`
+        }}
+      </UButton>
+    </div>
+    <div
+      v-if="props.error || props.socialError"
+      class="mt-4 space-y-2"
+      role="alert"
+    >
+      <UAlert
+        v-if="props.error"
+        color="error"
+        variant="subtle"
+        :description="props.error"
+      />
+      <UAlert
+        v-if="props.socialError"
+        color="error"
+        variant="subtle"
+        :description="props.socialError"
+      />
+    </div>
+  </UPageCard>
+  <UPageCard v-else>
     <UAuthForm
       title="Login"
       :fields="fields"

@@ -14,7 +14,9 @@ const emit = defineEmits<{
 
 const items = computed(() => [
   [
-    ...(props.user ? [{ label: `Hello, ${props.user.name}`, disabled: true }] : []),
+    ...(props.user
+      ? [{ label: `Hello, ${props.user.name}`, disabled: true }]
+      : []),
     { label: "Profile", to: "/app/profile" },
     ...(props.user?.role === "admin"
       ? [{ label: "Admin Panel", to: "/admin" }]

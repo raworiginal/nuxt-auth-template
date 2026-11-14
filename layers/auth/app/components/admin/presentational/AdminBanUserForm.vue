@@ -48,10 +48,7 @@ function handleSubmit(event: FormSubmitEvent<BanAdminUserFormData>) {
     </UFormField>
 
     <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
-      <UFormField
-        label="Duration (leave blank for permanent)"
-        name="duration"
-      >
+      <UFormField label="Duration (leave blank for permanent)" name="duration">
         <UInput
           id="admin-ban-user-duration"
           v-model.number="form.duration"

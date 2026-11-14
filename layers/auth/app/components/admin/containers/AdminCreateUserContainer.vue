@@ -34,7 +34,12 @@ function handleSubmit(input: CreateAdminUserFormData) {
       @submit="handleSubmit"
     />
     <template #footer="{ close }">
-      <UButton color="neutral" variant="outline" :disabled="loading" @click="close">
+      <UButton
+        color="neutral"
+        variant="outline"
+        :disabled="loading"
+        @click="close"
+      >
         Cancel
       </UButton>
       <UButton type="submit" form="admin-create-user-form" :loading="loading">

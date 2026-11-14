@@ -11,13 +11,8 @@ const emit = defineEmits<{
 
 const open = defineModel<boolean>("open", { required: true });
 const formKey = ref(0);
-const {
-  loading,
-  error,
-  successMessage,
-  clearState,
-  submit,
-} = useBanAdminUser();
+const { loading, error, successMessage, clearState, submit } =
+  useBanAdminUser();
 const toast = useToast();
 
 const title = computed(() =>
@@ -53,7 +48,12 @@ function handleSubmit(input: BanAdminUserFormData) {
       @submit="handleSubmit"
     />
     <template #footer="{ close }">
-      <UButton color="neutral" variant="outline" :disabled="loading" @click="close">
+      <UButton
+        color="neutral"
+        variant="outline"
+        :disabled="loading"
+        @click="close"
+      >
         Cancel
       </UButton>
       <UButton

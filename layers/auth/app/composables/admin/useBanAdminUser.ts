@@ -14,7 +14,9 @@ export function useBanAdminUser() {
   const showActionError = ref(false);
   const loading = computed(() => action.status.value === "pending");
   const error = computed(() =>
-    showActionError.value && action.status.value === "error" && action.error.value
+    showActionError.value &&
+    action.status.value === "error" &&
+    action.error.value
       ? getErrorMessage(action.error.value)
       : null,
   );

@@ -14,13 +14,8 @@ const emit = defineEmits<{
 
 const open = defineModel<boolean>("open", { required: true });
 const formKey = ref(0);
-const {
-  loading,
-  error,
-  successMessage,
-  clearState,
-  submit,
-} = useResetAdminUserPassword();
+const { loading, error, successMessage, clearState, submit } =
+  useResetAdminUserPassword();
 const toast = useToast();
 
 const title = computed(() =>
@@ -62,10 +57,19 @@ function handleSubmit(input: ResetAdminUserPasswordFormData) {
       @submit="handleSubmit"
     />
     <template #footer="{ close }">
-      <UButton color="neutral" variant="outline" :disabled="loading" @click="close">
+      <UButton
+        color="neutral"
+        variant="outline"
+        :disabled="loading"
+        @click="close"
+      >
         Cancel
       </UButton>
-      <UButton type="submit" form="admin-reset-password-form" :loading="loading">
+      <UButton
+        type="submit"
+        form="admin-reset-password-form"
+        :loading="loading"
+      >
         {{ loading ? "Resetting..." : "Reset password" }}
       </UButton>
     </template>

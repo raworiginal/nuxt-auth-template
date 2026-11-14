@@ -12,15 +12,14 @@ A Nuxt 4 starter project with Better Auth, NuxtHub, and PostgreSQL. It includes 
    cp .env.example .env
    ```
 
-3. Set a strong `NUXT_APP_SECRET` (at least 32 characters) and `ADMIN_PASSWORD` (at least 12 characters) in `.env`. `NUXT_BETTER_AUTH_SECRET` can be used when you want a dedicated Better Auth secret.
-4. Start PostgreSQL and set up the database and initial admin:
+3. Set a strong `NUXT_APP_SECRET` (at least 32 characters) and choose the authentication mode in `.env` (see [Authentication mode](#authentication-mode)). `NUXT_BETTER_AUTH_SECRET` can be used when you want a dedicated Better Auth secret.
+4. Start PostgreSQL and prepare the database:
 
    ```sh
    docker compose up -d
-   pnpm auth:setup
    ```
 
-   The setup command prepares Nuxt, applies pending migrations, and creates the initial admin if it does not already exist. An existing admin is left unchanged; setup stops if the configured email belongs to a non-admin account.
+   In the default `email-password` mode, run `pnpm auth:setup` to apply pending migrations and create the initial admin. For `social-only` setup, follow the separate steps below.
 5. Start the app:
 
    ```sh
@@ -35,6 +34,7 @@ A Nuxt 4 starter project with Better Auth, NuxtHub, and PostgreSQL. It includes 
 - `app/` contains project-owned pages and UI, including login, registration, navigation, and Better Auth client configuration.
 - `server/` contains this project's Better Auth server configuration, API handlers, and NuxtHub-managed PostgreSQL migrations. Better Auth tables are generated from the enabled plugins.
 - `shared/auth/` contains schemas and types used by both the app and server.
+- `/app/notes` is a small full-stack example: its PostgreSQL schema, authenticated CRUD endpoints, ownership checks, and UI demonstrate how to add private application data.
 
 The root `nuxt.config.ts` extends `./layers/auth`. To replace a layer page or component, add a project file at the same path under `app/`; project files take priority over extended-layer files. You can also edit or remove the local layer directly in your copied project.
 
@@ -62,7 +62,7 @@ Better Auth plugin tables are generated from the server configuration. Restart N
 
 ## Configuration
 
-The app uses PostgreSQL through NuxtHub. Set `DATABASE_URL` and `NUXT_APP_SECRET` in the environment. Set `NUXT_PUBLIC_SITE_URL` to the canonical production URL. Social sign-in is optional; set both variables for a provider to enable it:
+The app uses PostgreSQL through NuxtHub. Set `DATABASE_URL` and `NUXT_APP_SECRET` in the environment. Set `NUXT_PUBLIC_SITE_URL` to the canonical production URL. Social sign-in is optional in the default email/password mode; set both variables for a provider to enable it:
 
 ```dotenv
 NUXT_GOOGLE_CLIENT_ID=...
@@ -75,6 +75,20 @@ Register the matching callback URLs with each OAuth provider:
 
 - `https://your-domain/api/auth/callback/google`
 - `https://your-domain/api/auth/callback/github`
+
+### Authentication mode
+
+`NUXT_PUBLIC_AUTH_MODE` accepts `email-password` (the default, preserving the original behavior) or `social-only`. In `social-only` mode, Better Auth disables email/password authentication on the server, the login and registration pages only offer configured OAuth providers, and at least one provider must be configured. OAuth can be used for both registration and sign-in. No email sender or email-based password reset/account recovery flow is configured in either mode.
+
+For social-only initial admin setup, set `ADMIN_NAME` and `ADMIN_EMAIL`, configure a provider, then:
+
+1. Run `pnpm db:migrate` to apply the schema migrations.
+2. Start the app and sign in with the OAuth account whose verified email matches `ADMIN_EMAIL`.
+3. Stop the app and rerun `pnpm auth:setup`. The script promotes only an existing user with a verified email and an account from a configured social provider; it does not ask for or create a password. It refuses to promote unverified or non-OAuth accounts.
+
+`ADMIN_PASSWORD` is required only in `email-password` mode. Better Auth rate limits are stored in PostgreSQL so counters are shared across app instances; the rate-limit table is included in the generated Better Auth schema and created by the normal migration step.
+
+The custom `/api/admin/**` endpoints are limited to 20 requests per authenticated admin per minute, and `/api/account/**` endpoints to 30 requests per authenticated user per minute. Each group shares one counter across its routes and application instances; the app uses its own PostgreSQL table and stores a hash of the user ID, not a session token. These limits do not apply to public social-provider discovery or Better Auth's `/api/auth/**` endpoints.
 
 ### Netlify or Vercel with Neon
 
@@ -99,6 +113,8 @@ Keep `.env` and production credentials out of source control. Use a secret manag
 ## Checks
 
 ```sh
+pnpm lint
 pnpm typecheck
+pnpm test
 pnpm build
 ```

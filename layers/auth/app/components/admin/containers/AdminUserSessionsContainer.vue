@@ -43,10 +43,6 @@ const title = computed(() =>
   props.user ? `Sessions for ${props.user.name}` : "User sessions",
 );
 
-function loadSelectedUser() {
-  if (props.user) void load({ userId: props.user.id });
-}
-
 async function handleRevokeSession(sessionId: string) {
   if (!props.user) return;
   const success = await revokeSession.revoke({
@@ -75,23 +71,14 @@ function clearActionState() {
   revokeAllSessions.clearState();
 }
 
-watch(open, (isOpen) => {
-  if (isOpen) loadSelectedUser();
-  else {
+watch([open, () => props.user?.id], ([isOpen, userId]) => {
+  if (isOpen && userId) {
+    void load({ userId });
+  } else {
     clearState();
     clearActionState();
   }
 });
-
-watch(
-  () => props.user?.id,
-  (userId, previousUserId) => {
-    if (userId === previousUserId) return;
-    clearState();
-    clearActionState();
-    if (open.value && userId) void load({ userId });
-  },
-);
 </script>
 
 <template>

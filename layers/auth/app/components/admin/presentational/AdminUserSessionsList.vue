@@ -66,12 +66,33 @@ function formatDate(value: string) {
         >
           Revoke all sessions
         </UButton>
-        <div v-else class="rounded border border-error p-3" role="group" aria-labelledby="revoke-all-confirmation">
+        <div
+          v-else
+          class="rounded border border-error p-3"
+          role="group"
+          aria-labelledby="revoke-all-confirmation"
+        >
           <p id="revoke-all-confirmation">Revoke all sessions for this user?</p>
-          <UButton color="error" variant="soft" size="sm" class="mt-2" type="button" :loading="actionLoading" @click="emit('revokeAll')">
+          <UButton
+            color="error"
+            variant="soft"
+            size="sm"
+            class="mt-2"
+            type="button"
+            :loading="actionLoading"
+            @click="emit('revokeAll')"
+          >
             {{ actionLoading ? "Revoking..." : "Yes, revoke all" }}
           </UButton>
-          <UButton color="neutral" variant="outline" size="sm" class="ml-2 mt-2" type="button" :disabled="actionLoading" @click="emit('cancelAll')">
+          <UButton
+            color="neutral"
+            variant="outline"
+            size="sm"
+            class="ml-2 mt-2"
+            type="button"
+            :disabled="actionLoading"
+            @click="emit('cancelAll')"
+          >
             Cancel
           </UButton>
         </div>
@@ -104,12 +125,35 @@ function formatDate(value: string) {
             >
               Revoke
             </UButton>
-            <div v-else class="rounded border border-error p-3" role="group" :aria-labelledby="`revoke-session-confirmation-${session.id}`">
-              <p :id="`revoke-session-confirmation-${session.id}`">Revoke this session?</p>
-              <UButton color="error" variant="soft" size="sm" class="mt-2" type="button" :loading="actionLoading" @click="emit('revokeSession', session.id)">
+            <div
+              v-else
+              class="rounded border border-error p-3"
+              role="group"
+              :aria-labelledby="`revoke-session-confirmation-${session.id}`"
+            >
+              <p :id="`revoke-session-confirmation-${session.id}`">
+                Revoke this session?
+              </p>
+              <UButton
+                color="error"
+                variant="soft"
+                size="sm"
+                class="mt-2"
+                type="button"
+                :loading="actionLoading"
+                @click="emit('revokeSession', session.id)"
+              >
                 {{ actionLoading ? "Revoking..." : "Yes, revoke" }}
               </UButton>
-              <UButton color="neutral" variant="outline" size="sm" class="ml-2 mt-2" type="button" :disabled="actionLoading" @click="emit('cancelSession')">
+              <UButton
+                color="neutral"
+                variant="outline"
+                size="sm"
+                class="ml-2 mt-2"
+                type="button"
+                :disabled="actionLoading"
+                @click="emit('cancelSession')"
+              >
                 Cancel
               </UButton>
             </div>

@@ -5,9 +5,12 @@ import type { AdminUser } from "#shared/auth/types/admin";
 import { ADMIN_USERS_PAGE_SIZE_OPTIONS } from "#layers/auth/app/utils/admin";
 
 const { options, updateOptions, handleSearch } = useAdminUsersQuery();
+const authMode = useRuntimeConfig().public.authMode;
 
 const { users, total, loading, error, refresh } = await useAdminUsers(options);
-const dialogs = ref<InstanceType<typeof AdminUsersDialogsContainer> | null>(null);
+const dialogs = ref<InstanceType<typeof AdminUsersDialogsContainer> | null>(
+  null,
+);
 const createUserOpen = ref(false);
 
 function openDialog(
@@ -20,10 +23,7 @@ function openDialog(
 
 <template>
   <AdminUsersDialogsContainer ref="dialogs" @refresh="refresh" />
-  <AdminCreateUserContainer
-    v-model:open="createUserOpen"
-    @created="refresh"
-  />
+  <AdminCreateUserContainer v-model:open="createUserOpen" @created="refresh" />
 
   <UDashboardPanel>
     <template #header>
@@ -44,6 +44,7 @@ function openDialog(
         </template>
         <template #right>
           <UButton
+            v-if="authMode !== 'social-only'"
             class="w-full sm:w-auto"
             icon="i-lucide-user-round-plus"
             type="button"
