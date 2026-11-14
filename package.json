@@ -5,9 +5,9 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
-    "lint": "pnpm dlx prettier@3.6.2 --check app layers scripts server shared tests .github/workflows/*.yml .prettierrc.json package.json pnpm-workspace.yaml tsconfig.json nuxt.config.ts",
-    "format": "pnpm dlx prettier@3.6.2 --write app layers scripts server shared tests .github/workflows/*.yml .prettierrc.json package.json pnpm-workspace.yaml tsconfig.json nuxt.config.ts",
-    "format:check": "pnpm dlx prettier@3.6.2 --check app layers scripts server shared tests .github/workflows/*.yml .prettierrc.json package.json pnpm-workspace.yaml tsconfig.json nuxt.config.ts",
+    "lint": "pnpm dlx prettier@3.6.2 --check app layers scripts server tests .github/workflows/*.yml .prettierrc.json package.json pnpm-workspace.yaml tsconfig.json nuxt.config.ts",
+    "format": "pnpm dlx prettier@3.6.2 --write app layers scripts server tests .github/workflows/*.yml .prettierrc.json package.json pnpm-workspace.yaml tsconfig.json nuxt.config.ts",
+    "format:check": "pnpm dlx prettier@3.6.2 --check app layers scripts server tests .github/workflows/*.yml .prettierrc.json package.json pnpm-workspace.yaml tsconfig.json nuxt.config.ts",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "test": "tsx --test tests/*.test.ts tests/server/api/admin/*.test.ts",

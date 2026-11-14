@@ -1,4 +1,4 @@
-import { enforceCustomApiRateLimit } from "../../utils/custom-api-rate-limit";
+import { enforceCustomApiRateLimit } from "#server/utils/custom-api-rate-limit";
 
 export default defineEventHandler(async (event) => {
   setResponseHeader(event, "cache-control", "no-store");
