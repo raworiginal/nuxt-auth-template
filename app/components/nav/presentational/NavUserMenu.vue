@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { DropdownMenuItem } from "@nuxt/ui";
+
 const props = defineProps<{
   user: {
     name: string;
@@ -12,24 +14,27 @@ const emit = defineEmits<{
   logout: [];
 }>();
 
-const items = computed(() => [
-  [
-    ...(props.user
-      ? [{ label: `Hello, ${props.user.name}`, disabled: true }]
-      : []),
-    { label: "Profile", to: "/app/profile" },
-    ...(props.user?.role === "admin"
-      ? [{ label: "Admin Panel", to: "/admin" }]
-      : []),
-  ],
-  [
-    {
-      label: "Logout",
-      disabled: props.logoutLoading,
-      onSelect: () => emit("logout"),
-    },
-  ],
-]);
+const items = computed(
+  () =>
+    [
+      [
+        ...(props.user
+          ? [{ label: `Hello, ${props.user.name}`, type: "label" as const }]
+          : []),
+        { label: "Profile", to: "/app/profile" },
+        ...(props.user?.role === "admin"
+          ? [{ label: "Admin Panel", to: "/admin" }]
+          : []),
+      ],
+      [
+        {
+          label: "Logout",
+          disabled: props.logoutLoading,
+          onSelect: () => emit("logout"),
+        },
+      ],
+    ] satisfies DropdownMenuItem[][],
+);
 </script>
 
 <template>
